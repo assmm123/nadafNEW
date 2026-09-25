@@ -57,9 +57,9 @@
   <p>متجر إلكتروني — Laravel 13 + Livewire 3 + Filament 3 &nbsp;·&nbsp; تحليل 25 سبتمبر 2026</p>
   <div class="score">
     <div class="pill">جودة الكود<b>ممتازة</b></div>
-    <div class="pill">الاختبارات<b>391 ✓</b></div>
-    <div class="pill">جاهزية البيع<b>غير جاهز</b></div>
-    <div class="pill">الأمان التشغيلي<b>يحتاج إصلاح</b></div>
+    <div class="pill">الاختبارات<b>395 ✓</b></div>
+    <div class="pill">الأمان التشغيلي<b>مؤمَّن</b></div>
+    <div class="pill">جاهزية البيع<b>ينتظر المحتوى</b></div>
   </div>
 </header>
 
@@ -195,6 +195,32 @@
   </tr>
 </table>
 
+<h2>ما أُصلح</h2>
+<div class="card">
+  <table>
+    <tr><th style="width:150px">الحالة</th><th>الإصلاح</th></tr>
+    <tr><td><span class="sev p0">أُصلح ✓</span></td>
+      <td><b>نسخ <code>.env</code> الاحتياطية</b> — نُقلت <code>.env.bak-20260917</code> و
+        <code>.env.bak-lan</code> والملف الزائد إلى <code>A:/nadaf-private-backup</code>
+        <b>خارج المشروع</b> (لم تُحذف). وأُضيف نمط <code>.env.bak*</code>
+        إلى <code>.gitignore</code>.</td></tr>
+    <tr><td><span class="sev p0">أُصلح ✓</span></td>
+      <td><b>لا مستودع Git</b> — أُنشئ وأُودع إيداعان (387 ملفًا)، وتحقّق آليًا أن
+        لا ملف أسرار ولا قاعدة بيانات داخله.</td></tr>
+    <tr><td><span class="sev p1">أُصلح ✓</span></td>
+      <td><b>نسخة احتياطية لقاعدة البيانات</b> — لم تكن موجودة:
+        <code>database/backups/database-20260926-0019.sqlite</code></td></tr>
+    <tr><td><span class="sev p1">أُصلح ✓</span></td>
+      <td><b>قالب الإنتاج</b> — <code>.env.production.example</code> بـ
+        <code>APP_DEBUG=false</code> و <code>APP_ENV=production</code> وبريد SMTP فعلي.
+        <b>لم يُلمس <code>.env</code> المحلي</b> حتى لا يتعطّل التطوير.</td></tr>
+    <tr><td><span class="sev p1">أُصلح ✓</span></td>
+      <td><b>أمر <code>php artisan deploy:check</code></b> — يفحص البيئة ويُخرج برمز فشل
+        عند أي إعداد خطر، فلا يُنشر الموقع بإعداد تطويري. مُختبر في الاتجاهين
+        (4 اختبارات).</td></tr>
+  </table>
+</div>
+
 <h2>مؤشرات الجاهزية</h2>
 <div class="card">
   <div class="split">
@@ -207,23 +233,27 @@
       <div class="bar"><span class="good" style="width:90%"></span></div>
     </div>
     <div>
-      <div style="font-size:14px">المحتوى التجاري (المنتجات)</div>
-      <div class="bar"><span class="low" style="width:8%"></span></div>
+      <div style="font-size:14px">حفظ الإصدارات والنسخ الاحتياطي</div>
+      <div class="bar"><span class="good" style="width:88%"></span></div>
       <div style="font-size:14px;margin-top:14px">الأمان التشغيلي والإعدادات</div>
-      <div class="bar"><span class="mid" style="width:45%"></span></div>
-      <div style="font-size:14px;margin-top:14px">حفظ الإصدارات والنسخ الاحتياطي</div>
-      <div class="bar"><span class="low" style="width:5%"></span></div>
+      <div class="bar"><span class="good" style="width:85%"></span></div>
+      <div style="font-size:14px;margin-top:14px">المحتوى التجاري (المنتجات)</div>
+      <div class="bar"><span class="low" style="width:8%"></span></div>
     </div>
   </div>
 </div>
 
-<h2>خطة العمل المقترحة</h2>
+<h2>ما بقي — على الخادم فقط</h2>
 <div class="card">
+  <p style="margin-top:0">كل ما يلي يُحل على <b>ملف إعدادات الخادم</b> لا في الكود — والقالب
+  <code>.env.production.example</code> يجهّزه، و<code>deploy:check</code> يتحقق منه:</p>
   <ul>
-    <li><b>فورًا —</b> <code>git init</code> وأول commit بعد إضافة <code>.env.bak-*</code> للتجاهل، وحذف النسخ الاحتياطية الحاوية على الأسرار.</li>
-    <li><b>قبل الإطلاق —</b> <code>APP_DEBUG=false</code> و <code>APP_ENV=production</code>، وإعداد SMTP حقيقي وتجربة زر اختبار الإشعار.</li>
-    <li><b>جوهري —</b> إدخال المنتجات الحقيقية (صور، أسعار، متغيّرات، مخزون) ثم تنظيف الطلبات التجريبية الـ29.</li>
-    <li><b>لاحقًا —</b> حذف الملفات الزائدة، تقسيم <code>OrderResource</code>، وتفعيل عامل طوابير (queue worker) للإشعارات.</li>
+    <li><b>١.</b> انسخ القالب إلى <code>.env</code> على الخادم وعدّل القيم بين <code>&lt; &gt;</code>.</li>
+    <li><b>٢.</b> شغّل <code>php artisan deploy:check</code> قبل فتح الموقع — لا يُنشر قبل أن ينجح.</li>
+    <li><b>٣.</b> أضف المنتجات الحقيقية (صور، أسعار، متغيّرات، مخزون) — المتجر فيه منتجان حاليًا.</li>
+    <li><b>٤.</b> نظّف الطلبات التجريبية الـ29 (كل عناصرها الـ30 يتيمة) من لوحة الأدمن.</li>
+    <li><b>٥.</b> استثنِ من حزمة FTP: <code>.env.bak*</code> و <code>database/backups/</code>
+      و <code>.workbuddy-ai/</code> و <code>PROJECT-ANALYSIS.html</code>.</li>
   </ul>
 </div>
 
