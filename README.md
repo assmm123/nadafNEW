@@ -95,6 +95,30 @@ php artisan migrate:fresh --seed
 - **مطلوب من الواجهة الأمامية**: قالبا `resources/views/auth/forgot-password.blade.php` و`resources/views/auth/reset-password.blade.php` — نسختان جاهزتان مطابقتان لستايل `auth/login.blade.php` في **`docs/frontend-handoff/`**. ويلزم إضافة رابط «نسيت كلمة المرور؟» في صفحة الدخول إلى `route('password.request')`.
 - قبل إضافة القالبين: مسارا العرض يوجّهان برسالة واضحة (لا خطأ 500)، ومسارا التنفيذ يعملان كاملًا.
 
+## قبل الإطلاق الفعلي — فحص آلي
+
+انسخ قالب الإنتاج ثم عدّل القيم بين `< >`:
+
+```bash
+cp .env.production.example .env.production    # ثم عدّل القيم
+```
+
+القالب يضبط ما يختلف في الإنتاج عن التطوير: `APP_DEBUG=false`،
+`APP_ENV=production`، `SESSION_ENCRYPT=true`، كوكي الجلسة عبر HTTPS فقط،
+وسجلات بمستوى `error` لا `debug`، وبريد SMTP فعلي بدل `log`.
+
+ثم شغّل الفحص — **يفحص البيئة لا الكود**، ويُخرج برمز فشل عند أي إعداد خطر
+فيمكن إيقاف النشر آليًا:
+
+```bash
+php artisan deploy:check || exit 1
+```
+
+يفحص: بيئة الإنتاج، تعطيل التصحيح، ضبط `APP_KEY`، كون `APP_URL` نطاقًا حقيقيًا
+لا نفقًا مؤقتًا، خلوّ الجذر من نسخ `‎.env.bak*` (تحوي `APP_KEY` والنشر عبر FTP)،
+إعداد البريد الفعلي، اتصال قاعدة البيانات، صلاحيات المجلدات، ويُنبّه على متجر
+بلا منتجات أو طلبات بعناصر يتيمة.
+
 ## الإعدادات المطلوبة قبل الإطلاق الفعلي
 
 1. من لوحة الأدمن → **الإعدادات العامة**: عدّل سعر الصرف وأجرة التوصيل وبيانات المتجر.
@@ -133,6 +157,7 @@ php artisan serve                    # تشغيل الخادم
 php artisan migrate:fresh --seed     # إعادة بناء البيانات
 npm run build                        # بناء الأصول للإنتاج
 php artisan test                     # تشغيل الاختبارات
+php artisan deploy:check             # فحص جاهزية النشر (يُخرج برمز فشل إن كان الإعداد خطرًا)
 php artisan roles:matrix             # مصفوفة الأدوار والصلاحيات
 php artisan roles:matrix --user=admin@nadaf.store   # صلاحيات مستخدم بعينه
 php artisan orders:prune-proofs --dry-run           # معاينة تنظيف الإيصالات اليتيمة
