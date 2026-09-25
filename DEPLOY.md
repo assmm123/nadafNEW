@@ -90,10 +90,13 @@ E:\tools\php83\php.exe artisan deploy:check || exit 1
 
 مضمون الحزمة — **كل محتويات المشروع** باستثناء: `node_modules` و `.git` و `storage/logs/*` و `tests` و `E:\tools`.
 
-> ⚠️ **استثنِ هذه تحديدًا — كلها لا تخصّ الزائر:**
+> ⚠️ **استثنِ هذه تحديدًا — كلها لا تخصّ الزائر وتزيد زمن الرفع:**
 > - `‎.env.bak*` — نسخ احتياطية تحوي `APP_KEY` وأسرارًا. رفعها يعني نشر مفاتيحك.
 > - `database/backups/` — نسخ قاعدة البيانات (فيها جلسات وطلبات).
-> - `.workbuddy-ai/` و `PROJECT-ANALYSIS.html` — أدوات وتقارير التطوير.
+> - `.workbuddy-ai/` و `.kilo/` و `.mimosa/` و `.zcode/` — أدوات التطوير.
+> - `PROJECT-ANALYSIS.html` و `_m_home.png` و `NADAF-Chat-Concept.html`
+>   و `admin-preview.html` و `_legacy-views/` — تقارير ومعاينات قديمة
+>   (حوالي نصف ميغابايت لا يحتاجها الزائر).
 
 أسهل طريقة: انسخ المشروع لمجلد جديد واحذف المستثنيات ثم اضغطه، أو استخدم أي أداة ضغط. **مهم جدًا: مجلد `vendor` يجب أن يُرفع كاملًا** (الاستضافة المجانية لا تدير Composer).
 
@@ -197,9 +200,27 @@ echo "DONE - احذف هذا الملف الآن!";
 
 1. **شهادة SSL**: من VistaPanel → **Free SSL Certificates** → فعّل Let's Encrypt لنطاقك، ثم من **HTTPS Enforcement** فعّل التحويل لـ HTTPS (مطلوب لـ PWA والإشعارات).
 2. **إصدار PHP**: تأكد أن الحساب على PHP **8.1+** (يفضل 8.3).
-3. افتح موقعك: `https://nadaf.free.nf` — يجب أن يعمل المتجر.
-4. لوحة الأدمن: `https://nadaf.free.nf/admin` بنفس بيانات الأدمن المحلية.
-5. من **الإعدادات العامة** في اللوحة: فعّل إشعارات تيليجرام (اختبرها) والبريد، وعدّل بيانات الدفع والتواصل الحقيقية.
+3. **سخّن التخزين المؤقت** — يُسرّع كل صفحة بشكل ملحوظ (إعدادات، مسارات، قوالب،
+   أيقونات). الاستضافة المجانية بلا SSH، فاستخدم ملفًا مؤقتًا بنمط الخطوة 4:
+
+   ```php
+   <?php
+   // optimize-temp.php في الجذر — شغّله مرة ثم احذفه
+   require __DIR__.'/vendor/autoload.php';
+   $app = require_once __DIR__.'/bootstrap/app.php';
+   $app->make(Illuminate\Contracts\Console\Kernel::class)->bootstrap();
+   header('Content-Type: text/plain; charset=utf-8');
+   echo Illuminate\Support\Facades\Artisan::call('optimize');
+   echo "\nDONE - احذف هذا الملف الآن!";
+   ```
+
+   > ⚠️ التخزين المؤقت **يجمّد** `.env`: أي تعديل لاحق على الإعدادات لا يُقرأ
+   > حتى تمسحه. بعد أي تعديل أنشئ ملفًا يستدعي `optimize:clear` أو احذف
+   > `bootstrap/cache/config.php` و `bootstrap/cache/routes-*.php`.
+
+4. افتح موقعك: `https://nadaf.free.nf` — يجب أن يعمل المتجر.
+5. لوحة الأدمن: `https://nadaf.free.nf/admin` بنفس بيانات الأدمن المحلية.
+6. من **الإعدادات العامة** في اللوحة: فعّل إشعارات تيليجرام (اختبرها) والبريد، وعدّل بيانات الدفع والتواصل الحقيقية.
 
 ## الخطوة 6 — ما بعد الإطلاق
 
