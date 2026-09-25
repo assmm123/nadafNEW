@@ -1,0 +1,53 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 453 100" role="img" aria-label="NADAF">
+  <defs>
+    <linearGradient id="wm-gold" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#E3C175"/>
+      <stop offset="0.5" stop-color="#C9A24B"/>
+      <stop offset="1" stop-color="#9A7A32"/>
+    </linearGradient>
+    <linearGradient id="wm-navy" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#2B2B34"/>
+      <stop offset="1" stop-color="#1F1F26"/>
+    </linearGradient>
+  </defs>
+
+  <!-- ===== N ===== -->
+  <polygon points="0,0 13,0 13,100 0,100" fill="url(#wm-navy)"/>
+  <polygon points="0,0 13,0 49.3,55 36.3,55" fill="url(#wm-navy)"/>
+  <polygon points="66,0 79,0 79,55 66,55" fill="url(#wm-navy)"/>
+  <polygon points="36.3,55 79,55 79,100 66,100" fill="url(#wm-gold)"/>
+
+  <!-- ===== A (1) ===== -->
+  <g transform="translate(86,0)">
+    <polygon points="37,41 10,100 31,100" fill="url(#wm-navy)"/>
+    <polygon points="61,41 43,100 108,100" fill="url(#wm-navy)"/>
+    <polygon points="82,67 108,100 77,100" fill="url(#wm-gold)"/>
+    <polygon points="49,0 61,28 54,50 44,50 37,26" fill="url(#wm-gold)"/>
+    <polygon points="45,48 53,48 51,86 49,96 47,86" fill="url(#wm-gold)"/>
+  </g>
+
+  <!-- ===== D ===== -->
+  <g transform="translate(201,0)">
+    <path d="M13,0 L42,0 C66,0 75,20 75,50 C75,80 66,100 42,100 L13,100 Z
+             M13,13 L40,13 C57,13 62,26 62,50 C62,74 57,87 40,87 L13,87 Z"
+          fill="url(#wm-navy)" fill-rule="evenodd"/>
+    <polygon points="0,0 13,0 13,100 0,100" fill="url(#wm-navy)"/>
+    <polygon points="0,0 46,0 40,13 0,13" fill="url(#wm-gold)"/>
+  </g>
+
+  <!-- ===== A (2) ===== -->
+  <g transform="translate(283,0)">
+    <polygon points="37,41 10,100 31,100" fill="url(#wm-navy)"/>
+    <polygon points="61,41 43,100 108,100" fill="url(#wm-navy)"/>
+    <polygon points="82,67 108,100 77,100" fill="url(#wm-gold)"/>
+    <polygon points="49,0 61,28 54,50 44,50 37,26" fill="url(#wm-gold)"/>
+    <polygon points="45,48 53,48 51,86 49,96 47,86" fill="url(#wm-gold)"/>
+  </g>
+
+  <!-- ===== F ===== -->
+  <g transform="translate(398,0)">
+    <polygon points="0,0 13,0 13,100 0,100" fill="url(#wm-navy)"/>
+    <polygon points="0,0 55,0 55,11 0,11" fill="url(#wm-gold)"/>
+    <polygon points="0,39 48,39 48,52 0,52" fill="url(#wm-navy)"/>
+  </g>
+</svg>

@@ -1,0 +1,751 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl" data-theme="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>نداف — نموذج قسم الدردشة</title>
+<link rel="preconnect" href="https://fonts.bunny.net">
+<link href="https://fonts.bunny.net/css?family=tajawal:400,500,700,800|el-messiri:600,700&display=swap" rel="stylesheet">
+<style>
+/* ═══════════════════════════════════════════════════════════════
+   هوية نداف — نفس رموز لوحة الأدمن حرفيًا (admin.css)
+   خلفية #0F1319 · سطح #171D26 · سطح٢ #1B222D
+   نحاسي #D2A24E · شمبانيا #EAC97F
+   نص #F1ECE1 · نص٢ #A79F8F · نص٣ #8A93A3
+   ═══════════════════════════════════════════════════════════════ */
+:root{
+  --bg:#0F1319; --sf:#171D26; --sf2:#1B222D; --sf3:#181C28;
+  --line:rgba(255,255,255,.06); --line2:rgba(255,255,255,.12);
+  --brass:#D2A24E; --champ:#EAC97F; --brass-bg:rgba(210,162,78,.12); --brass-bd:rgba(210,162,78,.3);
+  --ivory:#F1ECE1; --mut:#A79F8F; --dim:#8A93A3;
+  --ok:#7FD3A2; --ok-bg:rgba(52,211,153,.1); --ok-bd:rgba(52,211,153,.25);
+  --warn:#E8B98A; --warn-bg:rgba(251,191,36,.1); --warn-bd:rgba(251,191,36,.25);
+  --err:#E9A3B2; --err-bg:rgba(248,113,113,.1); --err-bd:rgba(248,113,113,.25);
+  --info:#9DC0DC; --info-bg:rgba(96,165,250,.1); --info-bd:rgba(96,165,250,.25);
+  --r:14px; --r-lg:20px; --r-sm:8px;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{
+  background:var(--bg); color:var(--ivory);
+  font-family:'Tajawal',system-ui,sans-serif;
+  font-size:13.5px; line-height:1.6;
+  min-height:100vh; padding:26px 30px 60px;
+}
+body::before{
+  content:'';position:fixed;top:-200px;left:50%;transform:translateX(-50%);
+  width:800px;height:400px;pointer-events:none;z-index:0;
+  background:radial-gradient(ellipse,rgba(210,162,78,.08),transparent 70%);
+}
+.wrap{position:relative;z-index:1;max-width:1380px;margin:0 auto}
+h1,h2,h3{font-family:'El Messiri','Almarai',sans-serif;font-weight:600;letter-spacing:-.01em}
+a{color:inherit;text-decoration:none}
+button{font-family:inherit;cursor:pointer;border:0;background:none;color:inherit}
+.n{font-variant-numeric:tabular-nums;font-feature-settings:'tnum'}
+
+/* ── شريط الأدوات ── */
+.top{display:flex;align-items:flex-start;gap:14px;flex-wrap:wrap;padding-bottom:16px;border-bottom:1px solid var(--line)}
+.top h1{font-size:22px}
+.top .sub{font-size:11.5px;color:var(--dim)}
+.tools{margin-inline-start:auto;display:flex;gap:7px;flex-wrap:wrap;align-items:center}
+.tool{padding:7px 14px;font-size:12px;font-weight:600;border:1px solid var(--line2);border-radius:var(--r-sm);color:var(--mut);transition:.15s;display:inline-flex;align-items:center;gap:6px}
+.tool:hover{border-color:var(--brass);color:var(--champ)}
+.tool.solid{background:linear-gradient(135deg,#D2A24E,#8E6222);color:#fff;border-color:rgba(210,162,78,.3);font-weight:700}
+.tool.solid:hover{background:#EAC97F;color:#17110A}
+.tool svg{width:15px;height:15px;flex:none}
+
+/* ── شريط مؤشر الطابور (مهم) ── */
+.queue{
+  display:flex;align-items:center;gap:14px;flex-wrap:wrap;margin-top:18px;
+  padding:14px 18px;border-radius:var(--r);
+  background:linear-gradient(90deg,rgba(210,162,78,.14),rgba(210,162,78,.04));
+  border:1px solid var(--brass-bd);
+}
+.queue .ic{
+  width:42px;height:42px;flex:none;display:grid;place-items:center;border-radius:12px;
+  background:var(--brass-bg);border:1px solid var(--brass-bd);color:var(--champ);
+}
+.queue .ic svg{width:22px;height:22px}
+.queue .big{font-size:28px;font-weight:800;color:var(--champ);line-height:1}
+.queue .txt .t{font-size:13.5px;font-weight:700;color:var(--ivory)}
+.queue .txt .s{font-size:11.5px;color:var(--dim)}
+.queue .go{
+  margin-inline-start:auto;padding:9px 18px;border-radius:var(--r-sm);font-size:12.5px;font-weight:700;
+  background:var(--brass);color:#17110A;transition:.15s;
+}
+.queue .go:hover{background:var(--champ)}
+.queue.clear{background:linear-gradient(90deg,rgba(52,211,153,.1),rgba(52,211,153,.02));border-color:var(--ok-bd)}
+.queue.clear .ic{background:var(--ok-bg);border-color:var(--ok-bd);color:var(--ok)}
+.queue.clear .big{color:var(--ok)}
+
+/* ── التبويبات ── */
+.tabs{display:flex;gap:2px;margin-top:24px;border-bottom:1px solid var(--line2);flex-wrap:wrap}
+.tabs button{
+  padding:11px 18px;font-size:13px;font-weight:600;color:var(--mut);
+  border-bottom:2px solid transparent;margin-bottom:-1px;transition:.15s;
+  display:inline-flex;align-items:center;gap:8px;
+}
+.tabs button:hover{color:var(--ivory)}
+.tabs button[aria-selected="true"]{color:var(--champ);border-color:var(--brass);background:var(--brass-bg)}
+.tabs .b{
+  min-width:20px;height:20px;padding:0 6px;border-radius:10px;display:grid;place-items:center;
+  font-size:10.5px;font-weight:800;background:rgba(255,255,255,.06);color:var(--mut);
+}
+.tabs button[aria-selected="true"] .b{background:var(--brass);color:#17110A}
+.tabs .b.hot{background:rgba(248,113,113,.18);color:#FCA5A5;border:1px solid var(--err-bd)}
+.tabs button[aria-selected="true"] .b.hot{background:var(--brass);color:#17110A;border-color:transparent}
+
+/* ── عنوان قسم ── */
+.sh{display:flex;align-items:baseline;gap:10px;padding:22px 0 10px}
+.sh h2{font-size:15px}
+.sh .k{font-size:10.5px;font-weight:700;letter-spacing:.16em;text-transform:uppercase;color:var(--brass)}
+.sh .n{margin-inline-start:auto;font-size:11px;color:var(--dim);font-weight:500}
+.sh.sm{padding:18px 0 8px}
+
+.panel{background:var(--sf);border:1px solid var(--line);border-radius:var(--r);overflow:hidden}
+.panel-h{display:flex;align-items:center;gap:10px;padding:12px 16px;border-bottom:1px solid var(--line);font-size:12px;color:var(--mut);font-weight:600}
+.panel-h .r{margin-inline-start:auto;display:flex;gap:6px;align-items:center}
+
+/* ═══ ١) طابور الأسئلة بلا جواب ═══ */
+.qlist{display:flex;flex-direction:column}
+.q{border-bottom:1px solid var(--line);padding:15px 16px;transition:.15s}
+.q:last-child{border-bottom:0}
+.q:hover{background:var(--sf3)}
+.q.answered{opacity:.55}
+.q-head{display:flex;align-items:flex-start;gap:12px}
+.q-av{
+  width:36px;height:36px;flex:none;border-radius:11px;display:grid;place-items:center;
+  font-size:13px;font-weight:800;background:var(--brass-bg);border:1px solid var(--brass-bd);color:var(--champ);
+}
+.q-who{flex:1;min-width:0}
+.q-who .nm{font-size:13px;font-weight:700;color:var(--ivory)}
+.q-who .mt{font-size:11px;color:var(--dim);display:flex;gap:10px;flex-wrap:wrap;margin-top:2px}
+.q-who .mt .reps{
+  padding:1px 8px;border-radius:20px;font-size:10px;font-weight:700;
+  background:rgba(248,113,113,.12);color:#FCA5A5;border:1px solid var(--err-bd);
+}
+.q-body{
+  margin:11px 48px 0;padding:11px 14px;border-radius:11px;
+  background:var(--sf2);border:1px solid var(--line);border-inline-start:3px solid var(--brass);
+  font-size:13.5px;color:var(--ivory);
+}
+.q-body .lbl{font-size:10px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--dim);display:block;margin-bottom:4px}
+
+.q-ask{margin:11px 48px 0;display:flex;gap:8px;align-items:flex-start}
+.q-ask textarea{
+  flex:1;min-height:44px;max-height:160px;resize:vertical;
+  background:var(--sf2);border:1px solid var(--line2);border-radius:var(--r-sm);
+  color:var(--ivory);padding:10px 12px;font-family:inherit;font-size:13px;line-height:1.7;
+}
+.q-ask textarea::placeholder{color:var(--dim)}
+.q-ask textarea:focus{outline:none;border-color:var(--brass);box-shadow:0 0 0 3px rgba(210,162,78,.12)}
+.q-ask .send{
+  padding:10px 18px;border-radius:var(--r-sm);font-size:12.5px;font-weight:700;flex:none;
+  background:var(--brass);color:#17110A;transition:.15s;
+}
+.q-ask .send:hover{background:var(--champ)}
+.q-ask .send[disabled]{background:rgba(255,255,255,.06);color:var(--dim);cursor:not-allowed}
+
+.q-foot{margin:10px 48px 0;display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+.chip{
+  padding:5px 12px;border-radius:20px;font-size:11.5px;font-weight:600;
+  border:1px solid var(--line2);color:var(--mut);transition:.15s;
+}
+.chip:hover{border-color:var(--brass);color:var(--champ)}
+.chip.acc{background:var(--brass-bg);border-color:var(--brass-bd);color:var(--champ)}
+.chip.g{background:rgba(255,255,255,.04)}
+.q-foot .lbl{font-size:11px;color:var(--dim);font-weight:600}
+.q-foot .sp{margin-inline-start:auto}
+
+/* ── بطاقة «يُحوَّل لسؤال جاهز» ── */
+.note{
+  margin:11px 48px 0;padding:11px 14px;border-radius:11px;font-size:12px;
+  background:var(--brass-bg);border:1px dashed var(--brass-bd);color:var(--champ);
+  display:flex;gap:9px;align-items:flex-start;
+}
+.note svg{width:16px;height:16px;flex:none;margin-top:2px}
+.note.plain{background:rgba(255,255,255,.03);border-color:var(--line2);color:var(--dim)}
+
+/* ═══ ٢) الأسئلة الجاهزة ═══ */
+.tbl{width:100%;border-collapse:collapse}
+.tbl th{
+  font-size:10.5px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--dim);
+  text-align:start;padding:10px 16px;border-bottom:1px solid var(--line2);background:var(--sf2);
+}
+.tbl td{padding:11px 16px;font-size:12.5px;border-bottom:1px solid var(--line);vertical-align:top}
+.tbl tr:last-child td{border-bottom:0}
+.tbl tbody tr:hover{background:var(--sf3)}
+.tbl .q-col{font-weight:600;color:var(--ivory);max-width:290px}
+.tbl .a-col{color:var(--mut);max-width:340px;font-size:12px}
+.kw{display:flex;gap:4px;flex-wrap:wrap}
+.kw span{padding:2px 8px;border-radius:20px;font-size:10.5px;background:rgba(255,255,255,.05);color:var(--dim);border:1px solid var(--line)}
+.badge{display:inline-flex;align-items:center;gap:5px;padding:3px 10px;border-radius:20px;font-size:10.5px;font-weight:700;border:1px solid transparent}
+.badge i{width:6px;height:6px;border-radius:50%;background:currentColor;flex:none}
+.badge.on{color:var(--ok);background:var(--ok-bg);border-color:var(--ok-bd)}
+.badge.off{color:var(--dim);background:rgba(255,255,255,.04);border-color:var(--line2)}
+.badge.brass{color:var(--champ);background:var(--brass-bg);border-color:var(--brass-bd)}
+.badge.err{color:#FCA5A5;background:var(--err-bg);border-color:var(--err-bd)}
+.badge.info{color:var(--info);background:var(--info-bg);border-color:var(--info-bd)}
+
+.rowact{display:flex;gap:4px;justify-content:flex-end}
+.ibtn{
+  width:30px;height:30px;border-radius:var(--r-sm);display:grid;place-items:center;
+  color:var(--mut);border:1px solid transparent;transition:.15s;
+}
+.ibtn svg{width:15px;height:15px}
+.ibtn:hover{color:var(--champ);background:var(--brass-bg);border-color:var(--brass-bd)}
+.ibtn.dg:hover{color:#FCA5A5;background:var(--err-bg);border-color:var(--err-bd)}
+.ibtn.up:hover,.ibtn.dn:hover{color:var(--champ)}
+.ibtn[disabled]{opacity:.25;cursor:not-allowed}
+
+/* ── تبويب التحقق من التكرار ── */
+.dup{padding:14px 16px;border-bottom:1px solid var(--line);display:flex;gap:12px;align-items:flex-start}
+.dup:last-child{border-bottom:0}
+.dup .g{flex:1;min-width:0}
+.dup .pair{display:flex;gap:8px;align-items:center;font-size:12.5px;flex-wrap:wrap}
+.dup .a{color:var(--ivory);font-weight:600}
+.dup .b{color:var(--mut)}
+.dup .arw{color:var(--brass);font-weight:800}
+.dup .why{font-size:11px;color:var(--dim);margin-top:5px}
+.sim{
+  font-size:10.5px;font-weight:800;padding:2px 9px;border-radius:20px;
+  background:var(--warn-bg);color:var(--warn);border:1px solid var(--warn-bd);flex:none;
+}
+
+/* ── حالة الفراغ ── */
+.empty{padding:52px 20px;text-align:center;color:var(--dim)}
+.empty .ic{
+  width:58px;height:58px;margin:0 auto 14px;border-radius:16px;display:grid;place-items:center;
+  background:var(--ok-bg);border:1px solid var(--ok-bd);color:var(--ok);
+}
+.empty .ic svg{width:28px;height:28px}
+.empty .t{font-size:15px;font-weight:700;color:var(--ivory);font-family:'El Messiri',sans-serif}
+.empty .s{font-size:12px;margin-top:5px}
+
+/* ── الفلتر ── */
+.fbar{display:flex;gap:8px;align-items:center;flex-wrap:wrap;padding:11px 16px;border-bottom:1px solid var(--line);background:var(--sf2)}
+.fbar .lbl{font-size:11px;color:var(--dim);font-weight:600}
+.fbar input[type=search]{
+  flex:1;min-width:180px;max-width:320px;padding:7px 12px;border-radius:var(--r-sm);
+  background:var(--sf);border:1px solid var(--line2);color:var(--ivory);font-family:inherit;font-size:12.5px;
+}
+.fbar input::placeholder{color:var(--dim)}
+.fbar input:focus{outline:none;border-color:var(--brass);box-shadow:0 0 0 3px rgba(210,162,78,.12)}
+.fbar .sp{margin-inline-start:auto}
+
+/* ── ملاحظة توضيحية أسفل النموذج ── */
+.foot{
+  margin-top:32px;padding-top:20px;border-top:1px solid var(--line);
+  font-size:11.5px;color:var(--dim);display:flex;justify-content:space-between;gap:16px;flex-wrap:wrap;
+}
+.foot b{color:var(--champ);font-weight:700}
+.hide{display:none}
+
+@media (max-width:900px){
+  body{padding:18px 14px 50px}
+  .tbl .a-col,.tbl .kw-col{display:none}
+  .q-body,.q-ask,.q-foot,.note{margin-inline:0}
+}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <!-- ═══ شريط الأدوات ═══ -->
+  <div class="top">
+    <div>
+      <h1>الدردشة</h1>
+      <div class="sub">الأسئلة الجاهزة التي يراها الزائر · وطابور ما لم نُجب عليه</div>
+    </div>
+    <div class="tools">
+      <button class="tool solid" onclick="alert('يفتح نموذج «سؤال جاهز جديد»')">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg>
+        سؤال جاهز جديد
+      </button>
+      <button class="tool" onclick="alert('تحديث قائمة الأسئلة غير المُجابة')">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M21 12a9 9 0 1 1-3-6.7L21 8"/><path d="M21 3v5h-5"/></svg>
+        تحديث
+      </button>
+    </div>
+  </div>
+
+  <!-- ═══ مؤشر الطابور — أبرز عنصر في القسم ═══ -->
+  <div class="queue">
+    <div class="ic">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 11.5a8.4 8.4 0 0 1-9 8.4 9 9 0 0 1-3.8-.8L3 21l1.9-4.9A8.4 8.4 0 0 1 4 11.5a8.4 8.4 0 0 1 9-8.4 8.4 8.4 0 0 1 8 8.4Z"/><path d="M12 8v4M12 15h.01"/></svg>
+    </div>
+    <div class="big n">3</div>
+    <div class="txt">
+      <div class="t">سؤال بلا جواب — ينتظر إجابتك</div>
+      <div class="s">من ٢ زائر · أقدمها منذ ٥ أيام. الجواب هنا يُغلق السؤال عند كل من سأله، ويُضاف للأسئلة الجاهزة.</div>
+    </div>
+    <button class="go" onclick="alert('ينتقل إلى تبويب «بانتظار جواب»')">اذهب للطابور ←</button>
+  </div>
+
+  <!-- ═══ التبويبات ═══ -->
+  <div class="tabs" role="tablist">
+    <button role="tab" aria-selected="true" data-tab="queue" onclick="tab(this,'queue')">
+      بانتظار جواب <span class="b hot n">3</span>
+    </button>
+    <button role="tab" aria-selected="false" data-tab="ready" onclick="tab(this,'ready')">
+      الأسئلة الجاهزة <span class="b n">103</span>
+    </button>
+    <button role="tab" aria-selected="false" data-tab="dup" onclick="tab(this,'dup')">
+      تحقق من التكرار <span class="b n">2</span>
+    </button>
+    <button role="tab" aria-selected="false" data-tab="log" onclick="tab(this,'log')">
+      سجل المحادثات <span class="b n">22</span>
+    </button>
+  </div>
+
+  <!-- ═══════════════════════════════════════════════════════════
+       تبويب ١ — بانتظار جواب
+       ═══════════════════════════════════════════════════════════ -->
+  <section id="tab-queue">
+    <div class="sh">
+      <span class="k">Queue</span>
+      <h2>أسئلة لم نُجب عليها</h2>
+      <span class="n">تُرتَّب بالأكثر تكرارًا — لا بالأحدث</span>
+    </div>
+
+    <div class="panel">
+      <div class="fbar">
+        <span class="lbl">بحث</span>
+        <input type="search" placeholder="ابحث في نص السؤال أو اسم الزائر…">
+        <span class="sp"></span>
+        <button class="chip g">الأكثر تكرارًا</button>
+        <button class="chip">الأقدم</button>
+        <button class="chip">الأحدث</button>
+      </div>
+
+      <div class="qlist">
+
+        <!-- سؤال مكرر ٣ مرات -->
+        <div class="q">
+          <div class="q-head">
+            <div class="q-av">ز</div>
+            <div class="q-who">
+              <div class="nm">الزائر #FQJT…hjQT</div>
+              <div class="mt">
+                <span>‏2026/09/10 — 00:23</span>
+                <span>·</span>
+                <span>منذ ٥ أيام</span>
+                <span class="reps n">تكرر ٢ مرات</span>
+              </div>
+            </div>
+            <div class="rowact">
+              <button class="ibtn" title="تجاهل — ليس سؤالًا يستحق جوابًا جاهزًا" onclick="alert('يُعلَّم مُتجاهلًا ويخرج من الطابور')">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M18 6 6 18M6 6l12 12"/></svg>
+              </button>
+            </div>
+          </div>
+
+          <div class="q-body">
+            <span class="lbl">ما سأله الزائر حرفيًا</span>
+            في عدكم طقومة رسمية
+          </div>
+
+          <div class="q-ask">
+            <textarea placeholder="اكتب الجواب الذي سيظهر للزائر… (نفس جواب الأسئلة الجاهزة، لا رسالة شخصية)"></textarea>
+            <button class="send" onclick="alert('يُحفظ الجواب → يختفي السؤال من الطابور → يظهر في الأسئلة الجاهزة مفعّلًا')">أجب واحفظ</button>
+          </div>
+
+          <div class="q-foot">
+            <span class="lbl">كلمات مفتاحية</span>
+            <span class="chip acc">طقم رسمي</span>
+            <span class="chip acc">طقومة</span>
+            <button class="chip g">+ أضف كلمة</button>
+            <span class="sp"></span>
+            <button class="chip">تحرير نص السؤال</button>
+          </div>
+
+          <div class="note">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M12 9v4M12 17h.01"/><path d="M10.3 3.9 1.8 18a2 2 0 0 0 1.7 3h17a2 2 0 0 0 1.7-3L13.7 3.9a2 2 0 0 0-3.4 0Z"/></svg>
+            <span>«من انت» و«من مبرمجك» تكرّرا كثيرًا ويشوّشان الطابور. يمكنك تجاهلهما — <b>لن يظهرا للزائر</b> ويخرجان من القائمة.</span>
+          </div>
+        </div>
+
+        <!-- سؤال عن السعر -->
+        <div class="q">
+          <div class="q-head">
+            <div class="q-av">ز</div>
+            <div class="q-who">
+              <div class="nm">الزائر #FQJT…hjQT</div>
+              <div class="mt">
+                <span>‏2026/09/10 — 00:24</span>
+                <span>·</span>
+                <span>منذ ٥ أيام</span>
+              </div>
+            </div>
+            <div class="rowact">
+              <button class="ibtn" title="تجاهل" onclick="alert('يُعلَّم مُتجاهلًا ويخرج من الطابور')">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M18 6 6 18M6 6l12 12"/></svg>
+              </button>
+            </div>
+          </div>
+
+          <div class="q-body">
+            <span class="lbl">ما سأله الزائر حرفيًا</span>
+            كم سعر الطقم
+          </div>
+
+          <div class="q-ask">
+            <textarea placeholder="اكتب الجواب الذي سيظهر للزائر…"></textarea>
+            <button class="send" onclick="alert('يُحفظ الجواب → يختفي السؤال من الطابور → يظهر في الأسئلة الجاهزة مفعّلًا')">أجب واحفظ</button>
+          </div>
+
+          <div class="q-foot">
+            <span class="lbl">كلمات مفتاحية</span>
+            <span class="chip acc">سعر الطقم</span>
+            <span class="chip acc">قديش الطقم</span>
+            <button class="chip g">+ أضف كلمة</button>
+            <span class="sp"></span>
+            <button class="chip">تحرير نص السؤال</button>
+          </div>
+
+          <div class="note plain">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="9"/><path d="M12 16v-4M12 8h.01"/></svg>
+            <span>الأسعار تختلف بحسب المنتج. الجواب الأنسب عام: «كل منتج بسعره معروض على صفحته — والأسعار بالدولار أو الليرة حسب اختيارك».</span>
+          </div>
+        </div>
+
+        <!-- سؤال بلا تكرار -->
+        <div class="q">
+          <div class="q-head">
+            <div class="q-av">ز</div>
+            <div class="q-who">
+              <div class="nm">الزائر #FQJT…hjQT</div>
+              <div class="mt">
+                <span>‏2026/09/10 — 00:24</span>
+                <span>·</span>
+                <span>منذ ٥ أيام</span>
+              </div>
+            </div>
+            <div class="rowact">
+              <button class="ibtn" title="تجاهل" onclick="alert('يُعلَّم مُتجاهلًا ويخرج من الطابور')">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M18 6 6 18M6 6l12 12"/></svg>
+              </button>
+            </div>
+          </div>
+
+          <div class="q-body">
+            <span class="lbl">ما سأله الزائر حرفيًا</span>
+            من انت
+          </div>
+
+          <div class="q-ask">
+            <textarea placeholder="اكتب الجواب الذي سيظهر للزائر…"></textarea>
+            <button class="send" onclick="alert('يُحفظ الجواب → يختفي السؤال من الطابور → يظهر في الأسئلة الجاهزة مفعلًا')">أجب واحفظ</button>
+          </div>
+
+          <div class="q-foot">
+            <span class="lbl">كلمات مفتاحية</span>
+            <button class="chip g">+ أضف كلمة</button>
+            <span class="sp"></span>
+            <button class="chip">تحرير نص السؤال</button>
+            <button class="chip">علّم مُتجاهلًا</button>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- الحالة بعد الإجابة -->
+    <div class="sh sm">
+      <span class="k">After</span>
+      <h2>هكذا يبدو الطابور بعد الإجابة</h2>
+      <span class="n">السؤال لا يُحذف — يُغلق ويبقى في السجل</span>
+    </div>
+
+    <div class="panel">
+      <div class="empty">
+        <div class="ic">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>
+        </div>
+        <div class="t">لا سؤال بلا جواب</div>
+        <div class="s">كل ما سأله الزوار له جواب الآن. وأي سؤال جديد يظهر هنا فورًا.</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══════════════════════════════════════════════════════════
+       تبويب ٢ — الأسئلة الجاهزة
+       ═══════════════════════════════════════════════════════════ -->
+  <section id="tab-ready" class="hide">
+    <div class="sh">
+      <span class="k">Ready answers</span>
+      <h2>الأسئلة الجاهزة</h2>
+      <span class="n">هذه ما يظهر للزائر كأزرار — والترتيب هنا هو ترتيب ظهورها</span>
+    </div>
+
+    <div class="panel">
+      <div class="fbar">
+        <span class="lbl">بحث</span>
+        <input type="search" placeholder="ابحث في السؤال أو الجواب أو الكلمات المفتاحية…">
+        <span class="sp"></span>
+        <button class="chip" style="background:rgba(255,255,255,.06);border-color:var(--line2);color:var(--ivory)">الكل 103</button>
+        <button class="chip">مفعّلة 101</button>
+        <button class="chip">معطّلة 2</button>
+        <button class="chip">أُضيفت من طابور الأسئلة 3</button>
+      </div>
+
+      <table class="tbl">
+        <thead>
+          <tr>
+            <th style="width:48px">#</th>
+            <th>السؤال</th>
+            <th class="a-col">الجواب الجاهز</th>
+            <th class="kw-col" style="width:200px">الكلمات المفتاحية</th>
+            <th style="width:96px">الحالة</th>
+            <th style="width:120px;text-align:end">إجراءات</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>
+              <div class="rowact" style="flex-direction:column;gap:0;justify-content:center">
+                <button class="ibtn up" style="width:22px;height:18px" title="أعلى"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="m6 15 6-6 6 6"/></svg></button>
+                <button class="ibtn dn" style="width:22px;height:18px" title="أسفل"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="m6 9 6 6 6-6"/></svg></button>
+              </div>
+            </td>
+            <td class="q-col">كيف أطلب من المتجر؟</td>
+            <td class="a-col">اختر المنتج، حدد اللون والمقاس والكمية، ثم أتمم الطلب من السلة…</td>
+            <td class="kw-col">
+              <div class="kw"><span>أطلب</span><span>كيف اطلب</span><span>الطلب</span><span>شراء</span></div>
+            </td>
+            <td><span class="badge on"><i></i>مفعّل</span></td>
+            <td>
+              <div class="rowact">
+                <button class="ibtn" title="تعديل"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4Z"/></svg></button>
+                <button class="ibtn" title="تعطيل"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M18.4 6.6a9 9 0 1 1-12.8 0"/></svg></button>
+                <button class="ibtn dg" title="حذف"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M3 6h18M8 6V4h8v2M19 6l-1 14H6L5 6"/></svg></button>
+              </div>
+            </td>
+          </tr>
+          <tr>
+            <td>
+              <div class="rowact" style="flex-direction:column;gap:0;justify-content:center">
+                <button class="ibtn up" style="width:22px;height:18px"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="m6 15 6-6 6 6"/></svg></button>
+                <button class="ibtn dn" style="width:22px;height:18px"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="m6 9 6 6 6-6"/></svg></button>
+              </div>
+            </td>
+            <td class="q-col">ما هو كود الطلب NDF؟</td>
+            <td class="a-col">هو الرقم الفريد لطلبك يظهر بعد تأكيد الطلب في «طلباتي»…</td>
+            <td class="kw-col"><div class="kw"><span>كود الطلب</span><span>ndf</span><span>رقم الطلب</span></div></td>
+            <td><span class="badge on"><i></i>مفعّل</span></td>
+            <td>
+              <div class="rowact">
+                <button class="ibtn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4Z"/></svg></button>
+                <button class="ibtn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M18.4 6.6a9 9 0 1 1-12.8 0"/></svg></button>
+                <button class="ibtn dg"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M3 6h18M8 6V4h8v2M19 6l-1 14H6L5 6"/></svg></button>
+              </div>
+            </td>
+          </tr>
+          <!-- سؤال قديم يشير إلى حالة حُذفت — يظهر بشارة إنذار -->
+          <tr>
+            <td>
+              <div class="rowact" style="flex-direction:column;gap:0;justify-content:center">
+                <button class="ibtn up" style="width:22px;height:18px"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="m6 15 6-6 6 6"/></svg></button>
+                <button class="ibtn dn" style="width:22px;height:18px"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="m6 9 6 6 6-6"/></svg></button>
+              </div>
+            </td>
+            <td class="q-col">ماذا تعني حالة «مؤكد»؟</td>
+            <td class="a-col">تم التأكد من طلبك وقُبض المبلغ (الختم الأخضر على الفاتورة)…</td>
+            <td class="kw-col"><div class="kw"><span>مؤكد</span><span>تأكد الطلب</span></div></td>
+            <td><span class="badge err"><i></i>حالة محذوفة</span></td>
+            <td>
+              <div class="rowact">
+                <button class="ibtn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4Z"/></svg></button>
+                <button class="ibtn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M18.4 6.6a9 9 0 1 1-12.8 0"/></svg></button>
+                <button class="ibtn dg"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M3 6h18M8 6V4h8v2M19 6l-1 14H6L5 6"/></svg></button>
+              </div>
+            </td>
+          </tr>
+          <tr>
+            <td>
+              <div class="rowact" style="flex-direction:column;gap:0;justify-content:center">
+                <button class="ibtn up" style="width:22px;height:18px"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="m6 15 6-6 6 6"/></svg></button>
+                <button class="ibtn dn" style="width:22px;height:18px"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="m6 9 6 6 6-6"/></svg></button>
+              </div>
+            </td>
+            <td class="q-col">من انت <span class="badge brass" style="margin-inline-start:6px">أُضيف من طابور</span></td>
+            <td class="a-col">أنا مساعد نداف — أجيب عن أسئلة المتجر والتوصيل والدفع…</td>
+            <td class="kw-col"><div class="kw"><span>من انت</span><span>هل انت</span></div></td>
+            <td><span class="badge off"><i></i>معطّل</span></td>
+            <td>
+              <div class="rowact">
+                <button class="ibtn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4Z"/></svg></button>
+                <button class="ibtn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="m5 13 4 4L19 7"/></svg></button>
+                <button class="ibtn dg"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M3 6h18M8 6V4h8v2M19 6l-1 14H6L5 6"/></svg></button>
+              </div>
+            </td>
+          </tr>
+          <tr>
+            <td>
+              <div class="rowact" style="flex-direction:column;gap:0;justify-content:center">
+                <button class="ibtn up" style="width:22px;height:18px"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="m6 15 6-6 6 6"/></svg></button>
+                <button class="ibtn dn" style="width:22px;height:18px"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="m6 9 6 6 6-6"/></svg></button>
+              </div>
+            </td>
+            <td class="q-col">ما معنى الختم الأخضر؟</td>
+            <td class="a-col">الختم الأخضر يعني أن دفعك وصل وقُبض فعليًا، وتنتقل حالتك إلى «قيد التحضير»…</td>
+            <td class="kw-col"><div class="kw"><span>الختم الأخضر</span><span>تم الدفع</span></div></td>
+            <td><span class="badge on"><i></i>مفعّل</span></td>
+            <td>
+              <div class="rowact">
+                <button class="ibtn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4Z"/></svg></button>
+                <button class="ibtn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M18.4 6.6a9 9 0 1 1-12.8 0"/></svg></button>
+                <button class="ibtn dg"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M3 6h18M8 6V4h8v2M19 6l-1 14H6L5 6"/></svg></button>
+              </div>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <!-- ═══════════════════════════════════════════════════════════
+       تبويب ٣ — تحقق من التكرار
+       ═══════════════════════════════════════════════════════════ -->
+  <section id="tab-dup" class="hide">
+    <div class="sh">
+      <span class="k">Duplicates</span>
+      <h2>تحقق من التكرار</h2>
+      <span class="n">أسئلة تقول الشيء نفسه بصيغتين — إحداها زائدة وتُضلّل المطابقة</span>
+    </div>
+
+    <div class="panel">
+      <div class="panel-h">
+        أزواج متشابهة بنسبة عالية
+        <span class="r"><span class="badge info">للمراجعة فقط — لا حذف تلقائي</span></span>
+      </div>
+
+      <div class="dup">
+        <span class="sim n">82%</span>
+        <div class="g">
+          <div class="pair">
+            <span class="a">هل يمكن الدفع عبر واتساب؟</span>
+            <span class="arw">↔</span>
+            <span class="a">بقدر أدفع واتساب؟</span>
+          </div>
+          <div class="why">قلب واحد للجملة نفسها. الأفضل الإبقاء على الصيغة الفصحى، وإضافة «بقدر أدفع واتساب» إلى كلماتها المفتاحية.</div>
+          <div class="rowact" style="justify-content:flex-start;margin-top:9px">
+            <button class="chip acc">ادمج — أبقِ الأولى واحذف الثانية</button>
+            <button class="chip">أبقِ الاثنتين</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="dup">
+        <span class="sim n">74%</span>
+        <div class="g">
+          <div class="pair">
+            <span class="a">بتفاتيروا باسم شركة؟</span>
+            <span class="arw">↔</span>
+            <span class="a">فيكوا تفاتيروا للشركة؟</span>
+          </div>
+          <div class="why">الجوابان متطابقان تقريبًا. دمجها يمنع احتمالين لنفس السؤال في واجهة الزائر.</div>
+          <div class="rowact" style="justify-content:flex-start;margin-top:9px">
+            <button class="chip acc">ادمج — أبقِ الأولى واحذف الثانية</button>
+            <button class="chip">أبقِ الاثنتين</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══════════════════════════════════════════════════════════
+       تبويب ٤ — سجل المحادثات
+       ═══════════════════════════════════════════════════════════ -->
+  <section id="tab-log" class="hide">
+    <div class="sh">
+      <span class="k">Log</span>
+      <h2>سجل المحادثات</h2>
+      <span class="n">للقراءة — ولا يُحذف منه شيء</span>
+    </div>
+
+    <div class="panel">
+      <div class="fbar">
+        <span class="lbl">بحث</span>
+        <input type="search" placeholder="ابحث في رسالة الزائر…">
+        <span class="sp"></span>
+        <button class="chip" style="background:rgba(255,255,255,.06);border-color:var(--line2);color:var(--ivory)">الكل 22</button>
+        <button class="chip">بلا جواب 3</button>
+        <button class="chip">وجَب جوابًا 19</button>
+        <button class="chip">عند فشل الدفع</button>
+      </div>
+
+      <table class="tbl">
+        <thead>
+          <tr>
+            <th style="width:130px">الوقت</th>
+            <th style="width:120px">الزائر</th>
+            <th>رسالته</th>
+            <th style="width:200px">الجواب الذي ظهر له</th>
+            <th style="width:100px">المصدر</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td class="n" style="color:var(--dim)">‏09/15 — 21:45</td>
+            <td><span class="badge brass">ali</span></td>
+            <td>كيف أطلب من المتجر؟</td>
+            <td style="color:var(--ok)">اختر المنتج، حدد اللون والمقاس…</td>
+            <td><span class="badge off"><i></i>عادي</span></td>
+          </tr>
+          <tr>
+            <td class="n" style="color:var(--dim)">‏09/12 — 00:21</td>
+            <td><span class="badge brass">mazin</span></td>
+            <td>من</td>
+            <td style="color:var(--err)">— لم يجد جوابًا، عُرضت وسائل التواصل</td>
+            <td><span class="badge err"><i></i>طابور</span></td>
+          </tr>
+          <tr>
+            <td class="n" style="color:var(--dim)">‏09/12 — 00:20</td>
+            <td><span class="badge brass">mazin</span></td>
+            <td>كيف أتابع طلبي؟</td>
+            <td style="color:var(--ok)">من «طلباتي» في الحساب: سترى محطات الطلب…</td>
+            <td><span class="badge off"><i></i>عادي</span></td>
+          </tr>
+          <tr>
+            <td class="n" style="color:var(--dim)">‏09/10 — 00:24</td>
+            <td><span class="badge off"><i></i>زائر</span></td>
+            <td>كم سعر الطقم</td>
+            <td style="color:var(--err)">— لم يجد جوابًا</td>
+            <td><span class="badge err"><i></i>طابور</span></td>
+          </tr>
+          <tr>
+            <td class="n" style="color:var(--dim)">‏09/10 — 00:23</td>
+            <td><span class="badge off"><i></i>زائر</span></td>
+            <td>في عدكم طقومة رسمية</td>
+            <td style="color:var(--err)">— لم يجد جوابًا</td>
+            <td><span class="badge err"><i></i>طابور</span></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="note" style="margin:16px 0 0">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M12 9v4M12 17h.01"/><path d="M10.3 3.9 1.8 18a2 2 0 0 0 1.7 3h17a2 2 0 0 0 1.7-3L13.7 3.9a2 2 0 0 0-3.4 0Z"/></svg>
+      <span>هذا الجدول هو <b>مصدر مجاني لأفكار الأسئلة الجاهزة</b>: كل صف أحمر يعني سؤالًا يستحق جوابًا. اضغط <b>«أجب»</b> في الصف فينتقل مباشرة إلى تبويب «بانتظار جواب».</span>
+    </div>
+  </section>
+
+  <!-- ═══ تذييل ═══ -->
+  <div class="foot">
+    <span>نموذج <b>قسم الدردشة</b> — هوية نداف الداكنة · <b>لا ينحرف عن الواجهة الحالية</b></span>
+    <span>٤ تبويبات: بانتظار جواب · الأسئلة الجاهزة · تحقق من التكرار · سجل المحادثات</span>
+  </div>
+
+</div>
+
+<script>
+function tab(el, id){
+  document.querySelectorAll('.tabs button').forEach(b => b.setAttribute('aria-selected', b === el ? 'true' : 'false'));
+  ['queue','ready','dup','log'].forEach(t => {
+    document.getElementById('tab-' + t).classList.toggle('hide', t !== id);
+  });
+  window.scrollTo({top:0, behavior:'smooth'});
+}
+</script>
+</body>
+</html>

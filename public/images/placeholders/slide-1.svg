@@ -1,0 +1,16 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 400">
+  <defs>
+    <linearGradient id="g" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#1A2A3A"/>
+      <stop offset="1" stop-color="#2E4560"/>
+    </linearGradient>
+  </defs>
+  <rect width="1200" height="400" fill="url(#g)"/>
+  <circle cx="980" cy="200" r="150" fill="#C9A84C" opacity="0.10"/>
+  <circle cx="980" cy="200" r="110" fill="#C9A84C" opacity="0.12"/>
+  <path d="M980 80 L940 132 L980 176 L1020 132 Z" fill="#C9A84C"/>
+  <path d="M950 170 L1010 170 L1040 320 L980 370 L920 320 Z" fill="#C9A84C"/>
+  <text x="100" y="180" font-family="Poppins, Arial, sans-serif" font-weight="700" font-size="52" fill="#FFFFFF" letter-spacing="8">NADAF</text>
+  <text x="102" y="235" font-family="Tajawal, Arial, sans-serif" font-weight="700" font-size="30" fill="#C9A84C">أناقة تليق بك</text>
+  <text x="102" y="280" font-family="Tajawal, Arial, sans-serif" font-size="18" fill="#FFFFFF" opacity="0.7">كرافات • أطقم رسمية • إكسسوارات</text>
+</svg>

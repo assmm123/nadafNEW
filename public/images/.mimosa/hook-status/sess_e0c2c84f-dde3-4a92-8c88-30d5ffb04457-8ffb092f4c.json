@@ -1,0 +1,14 @@
+{
+  "schemaVersion": "mimosa-hook-status/v1",
+  "recordedAt": "2026-09-09T01:06:55.600Z",
+  "sessionId": "sess_e0c2c84f-dde3-4a92-8c88-30d5ffb04457",
+  "event": "PostToolUse",
+  "toolName": "Edit",
+  "file": "E:\\المشروع\\resources\\views\\livewire\\checkout-form.blade.php",
+  "outcome": "inconclusive",
+  "coverage": "partial",
+  "findingCount": 0,
+  "durationMs": 69,
+  "hostState": "hook_complete",
+  "reportHint": ".mimosa/reports/"
+}

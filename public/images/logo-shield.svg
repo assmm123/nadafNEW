@@ -1,0 +1,54 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 240" role="img" aria-label="NADAF shield emblem">
+  <defs>
+    <linearGradient id="sh-gold" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#8F6B25"/>
+      <stop offset="0.3" stop-color="#DDBE72"/>
+      <stop offset="0.52" stop-color="#F3E0AC"/>
+      <stop offset="0.75" stop-color="#C39A4A"/>
+      <stop offset="1" stop-color="#9A7730"/>
+    </linearGradient>
+    <linearGradient id="sh-ribbon" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#E8CD8A"/>
+      <stop offset="0.5" stop-color="#C9A24B"/>
+      <stop offset="1" stop-color="#9A7A32"/>
+    </linearGradient>
+    <linearGradient id="sh-blade-l" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#F3E0AC"/>
+      <stop offset="1" stop-color="#C39A4A"/>
+    </linearGradient>
+    <linearGradient id="sh-blade-r" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#B98F3E"/>
+      <stop offset="1" stop-color="#8A671F"/>
+    </linearGradient>
+  </defs>
+
+  <!-- نصفا الدرع بظلّين -->
+  <path d="M100 6 L100 230 C52 206 16 170 16 114 L16 28 Z" fill="#2E2E37"/>
+  <path d="M100 6 L184 28 L184 114 C184 170 148 206 100 230 Z" fill="#232329"/>
+  <!-- الإطار الذهبي -->
+  <path d="M100 6 L184 28 L184 114 C184 170 148 206 100 230 C52 206 16 170 16 114 L16 28 Z"
+        fill="none" stroke="url(#sh-gold)" stroke-width="4.5" stroke-linejoin="round"/>
+  <path d="M100 16 L175 34 L175 113 C175 162 146 195 100 218 C54 195 25 162 25 113 L25 34 Z"
+        fill="none" stroke="url(#sh-gold)" stroke-width="1.2" opacity="0.7"/>
+
+  <!-- حرف N: شريط متصل (ساق → قوس → قطر صاعد) + الساق اليمنى -->
+  <g fill="none" stroke="url(#sh-ribbon)" stroke-width="13" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M64,56 L64,146 Q64,160 76,151 L126,109 Q136,101 136,88"/>
+    <path d="M136,56 L136,184"/>
+  </g>
+
+  <!-- ربطة العنق -->
+  <g>
+    <!-- الياقة -->
+    <polygon points="82,52 100,70 86,80" fill="url(#sh-blade-l)"/>
+    <polygon points="118,52 100,70 114,80" fill="url(#sh-blade-r)"/>
+    <!-- العقدة -->
+    <polygon points="100,68 88,84 100,100" fill="url(#sh-blade-l)"/>
+    <polygon points="100,68 112,84 100,100" fill="url(#sh-blade-r)"/>
+    <!-- النصل -->
+    <polygon points="91,100 100,104 100,178 96,172 87,150" fill="url(#sh-blade-l)"/>
+    <polygon points="109,100 100,104 100,178 104,172 113,150" fill="url(#sh-blade-r)"/>
+    <!-- لمعة الحافة -->
+    <polyline points="91,100 87,150 96,172" fill="none" stroke="#F8ECC8" stroke-width="1.5" opacity="0.75"/>
+  </g>
+</svg>

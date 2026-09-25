@@ -1,0 +1,145 @@
+/* ══════════════════════════════════════════════════════════════════════════
+   نظام هوية نداف — نسخة تخدم لوحة الأدمن
+   ──────────────────────────────────────────────────────────────────────────
+   لماذا يوجد هذا الملف؟
+   صفحات اللوحة («منتجاتي» وأخواتها) تستخدم أصناف `.nad-*` المعرَّفة في
+   **app.css** — وهو ملف المتجر، واللوحة **لا تُحمّله إطلاقًا** (تُحمّل
+   admin.css وحده عبر viteTheme). فكانت «منتجاتي» تُبنى في HTML كاملة
+   (٧ بطاقات أقسام) لكن **بلا أي تنسيق**: البطاقة تفقد `position:relative`،
+   فيغطّي عنصرها الاحتياطي `absolute inset-0` الصفحة كلها بتدرّج داكن
+   ⇒ صفحة تبدو فارغة تمامًا رغم أن البيانات موجودة.
+
+   المرجع هو `resources/css/app.css`. أي تعديل على الهوية هناك يجب أن يُنسخ
+   هنا. والنسخ مقصود لا سهوًا: استيراد app.css في اللوحة يجلب Tailwind
+   preflight كاملًا فيتعارض مع admin.css.
+
+   المحتوى: رموز الألوان + متغيّرات الهوية + قواعد الأصناف التي تستخدمها
+   قوالب اللوحة **فقط** (لا مكوّنات المتجر) — حُدِّدت آليًا من القوالب.
+   ══════════════════════════════════════════════════════════════════════════ */
+
+/* ── رموز الألوان: تُولّد أصناف Tailwind مثل text-nad-ivory و bg-nad-surface2 ── */
+@theme {
+
+    --color-nad-bg: #0F1319;
+    --color-nad-surface: #171D26;
+    --color-nad-surface2: #1B222D;
+    --color-nad-line: rgba(210, 162, 78, .16);
+    --color-nad-line2: rgba(255, 255, 255, .09);
+    --color-nad-brass: #D2A24E;
+    --color-nad-champ: #EAC97F;
+    --color-nad-ox: #8E3B4E;
+    --color-nad-ivory: #F1ECE1;
+    --color-nad-mut: #A79F8F;
+    --color-nad-dim: #8A93A3;
+    --color-nad-bg: #FAF8F4;
+    --color-nad-surface: #FFFFFF;
+    --color-nad-surface2: #F2EEE6;
+    --color-nad-line: rgba(176, 124, 46, .30);
+    --color-nad-line2: rgba(20, 17, 12, .10);
+    --color-nad-brass: #B07C2E;
+    --color-nad-champ: #8E6222;
+    --color-nad-ox: #9E3A50;
+    --color-nad-ivory: #14110C;
+    --color-nad-mut: #5C564C;
+    --color-nad-dim: #7B7568;
+}
+
+/* ── متغيّرات الهوية التي تقرأها قواعد المكوّنات ── */
+:root {
+    --n-bg: #0F1319;
+    --n-sf: #171D26;
+    --n-sf2: #1B222D;
+    --n-line: rgba(210, 162, 78, .16);
+    --n-line2: rgba(255, 255, 255, .09);
+    --n-brass: #D2A24E;
+    --n-brass2: #B9863C;
+    --n-champ: #EAC97F;
+    --n-ivory: #F1ECE1;
+    --n-mut: #A79F8F;
+    --n-dim: #8A93A3;
+    --n-ox: #8E3B4E;
+    --n-ox-t: #F6E2E7;
+    --n-ok: #4EA57C;
+    --n-ok-t: #7FD3A2;
+    --n-wr: #C77E3F;
+    --n-wr-t: #E8B98A;
+    --n-in: #6C93B4;
+    --n-in-t: #9DC0DC;
+    --n-err: #E9A3B2;
+    --n-soft: #D8D2C4;
+    --n-mut2: #C9C2B4;
+    --n-mut3: #BFB8A8;
+    --n-ink: #171106;
+    --n-overlay: rgba(15, 19, 25, .87);
+    --n-scrim: rgba(15, 19, 25, .55);
+    --n-grain: .045;
+    --n-filter: sepia(.28) saturate(1.15) contrast(1.04) brightness(.94);
+    --n-shadow-sm: 0 12px 28px rgba(0, 0, 0, .28);
+    --n-shadow-lg: 0 24px 48px rgba(0, 0, 0, .5);
+    --n-shadow-card: 0 18px 44px rgba(0, 0, 0, .35);
+}
+
+.nad-gcard{position:relative;display:block;aspect-ratio:7/5;overflow:hidden;border-radius:18px;
+  border:1px solid var(--n-line2);background:var(--n-sf);text-align:start;
+  box-shadow:var(--n-shadow-sm);transition:transform .35s,box-shadow .35s,border-color .35s}
+.nad-gcard:hover{transform:translateY(-7px);border-color:color-mix(in srgb, var(--n-brass) 55%, transparent);box-shadow:var(--n-shadow-lg)}
+.nad-gcard .ph{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;
+  filter:var(--n-filter);transition:transform .8s cubic-bezier(.2,.6,.2,1)}
+.nad-gcard:hover .ph{transform:scale(1.08)}
+.nad-shade{position:absolute;inset:0;background:linear-gradient(185deg,transparent 28%,color-mix(in srgb, var(--n-bg) 45%, transparent) 62%,color-mix(in srgb, var(--n-bg) 94%, transparent) 100%)}
+.nad-gbadge{position:absolute;top:12px;inset-inline-end:12px;font-size:11px;font-weight:800;padding:5px 12px;border-radius:999px;
+  background:linear-gradient(135deg,var(--n-ox),color-mix(in srgb, var(--n-ox) 62%, black));color:var(--n-ox-t);box-shadow:0 4px 16px color-mix(in srgb, var(--n-ox) 50%, transparent)}
+.nad-gicon{position:absolute;top:12px;inset-inline-start:12px;width:42px;height:42px;border-radius:14px;display:grid;place-items:center;overflow:hidden;
+  background:var(--n-scrim);backdrop-filter:blur(6px);border:1px solid var(--n-line);color:var(--n-champ)}
+.nad-gicon svg{width:20px;height:20px}
+.nad-gicon::after{content:'';position:absolute;top:0;left:-70%;width:45%;height:100%;transform:skewX(-18deg);
+  background:linear-gradient(100deg,transparent,color-mix(in srgb, var(--n-champ) 50%, transparent),transparent)}
+.nad-gcard:hover .nad-gicon::after{animation:nad-shine 1s ease .05s}
+.nad-gmeta{position:absolute;inset-inline:14px;bottom:12px;display:flex;align-items:flex-end;justify-content:space-between;gap:10px}
+.nad-gmeta h3{font-size:21px;text-shadow:0 2px 12px rgba(0,0,0,.65)}
+.nad-gmeta p{font-size:12px;color:var(--n-mut2);margin-top:2px}
+.nad-gpill{display:flex;flex-direction:column;align-items:center;justify-content:center;min-width:62px;padding:8px 14px;border-radius:20px;
+  background:color-mix(in srgb, var(--n-ivory) 7%, transparent);backdrop-filter:blur(10px);border:1px solid color-mix(in srgb, var(--n-ivory) 16%, transparent);box-shadow:inset 0 1px 0 color-mix(in srgb, var(--n-ivory) 12%, transparent)}
+.nad-gpill b{font-family:'El Messiri';font-size:26px;line-height:1.05;color:var(--n-champ)}
+.nad-gpill small{font-size:10px;color:var(--n-mut3)}
+.nad-chip{font-size:10.5px;font-weight:800;padding:3px 10px;border-radius:999px;border:1px solid;white-space:nowrap}
+.nad-chip-ok{color:var(--n-ok-t);border-color:color-mix(in srgb, var(--n-ok) 50%, transparent);background:color-mix(in srgb, var(--n-ok) 12%, transparent)}
+.nad-chip-br{color:var(--n-champ);border-color:color-mix(in srgb, var(--n-brass) 45%, transparent);background:color-mix(in srgb, var(--n-brass) 10%, transparent)}
+.nad-chip-ox{color:var(--n-err);border-color:color-mix(in srgb, var(--n-ox) 55%, transparent);background:color-mix(in srgb, var(--n-ox) 14%, transparent)}
+.nad-chip-wr{color:var(--n-wr-t);border-color:color-mix(in srgb, var(--n-wr) 50%, transparent);background:color-mix(in srgb, var(--n-wr) 12%, transparent)}
+.nad-chip-mut{color:var(--n-mut);border-color:var(--n-line2);background:color-mix(in srgb, var(--n-ivory) 4%, transparent)}
+.nad-ocard{background:var(--n-sf);border:1px solid var(--n-line2);border-radius:16px;overflow:hidden;transition:.25s}
+.nad-ocard:hover{border-color:color-mix(in srgb, var(--n-brass) 42%, transparent)}
+.nad-ocode{font-size:11.5px;letter-spacing:1px;color:var(--n-champ);background:color-mix(in srgb, var(--n-brass) 10%, transparent);border:1px solid color-mix(in srgb, var(--n-brass) 28%, transparent);
+  padding:2px 9px;border-radius:7px;direction:ltr;display:inline-block;white-space:nowrap;font-family:ui-monospace,monospace}
+.nad-price{font-family:'El Messiri';font-size:20px;color:var(--n-champ)}
+.nad-btn-brass{display:inline-flex;align-items:center;justify-content:center;gap:8px;background:var(--n-brass);color:var(--n-ink);
+  font-weight:800;font-size:13.5px;padding:11px 24px;border-radius:999px;transition:.2s}
+.nad-btn-brass:hover{background:var(--n-champ)}
+.nad-btn-ghost{display:inline-flex;align-items:center;justify-content:center;gap:8px;border:1px solid color-mix(in srgb, var(--n-brass) 40%, transparent);
+  color:var(--n-champ);background:transparent;font-weight:700;font-size:13px;padding:10px 20px;border-radius:999px;transition:.2s}
+.nad-btn-ghost:hover{border-color:var(--n-brass);background:color-mix(in srgb, var(--n-brass) 13%, transparent)}
+.nad-sec{padding:34px 0 14px;display:flex;align-items:flex-end;gap:12px;flex-wrap:wrap}
+.nad-sec-sm{padding:16px 0 14px}
+.nad-sec h2{font-size:clamp(21px,3vw,28px);color:var(--n-ivory)}
+.nad-sec .dia{color:var(--n-brass);font-size:.55em;vertical-align:3px;margin-inline-end:8px}
+.nad-empty{grid-column:1/-1;text-align:center;padding:56px 0;color:var(--n-dim)}
+.nad-room-head{position:sticky;top:58px;z-index:40;background:var(--n-overlay);backdrop-filter:blur(14px);
+  border-bottom:1px solid var(--n-line)}
+.nad-room-row{display:flex;align-items:center;gap:14px;padding-block:12px;flex-wrap:wrap}
+.nad-room-back{display:inline-flex;align-items:center;gap:7px;font-weight:800;font-size:13.5px;color:var(--n-champ);
+  border:1px solid color-mix(in srgb, var(--n-brass) 40%, transparent);background:transparent;padding:8px 14px;border-radius:999px;transition:.2s;white-space:nowrap;cursor:pointer}
+.nad-room-back svg{width:16px;height:16px}
+.nad-room-back:hover{border-color:var(--n-brass);background:color-mix(in srgb, var(--n-brass) 13%, transparent)}
+.nad-room-title h2{font-size:19px;color:var(--n-ivory)}
+.nad-room-title small{color:var(--n-mut);font-size:12px;display:block;margin-top:1px}
+.nad-room-count{margin-inline-start:auto;display:flex;align-items:center;gap:8px;font-size:13px;color:var(--n-champ);
+  background:color-mix(in srgb, var(--n-brass) 13%, transparent);border:1px solid color-mix(in srgb, var(--n-brass) 40%, transparent);padding:6px 14px;border-radius:999px;white-space:nowrap}
+.nad-room-count b{font-family:'El Messiri','Almarai',sans-serif;font-size:18px}
+.nad-room-count .dot{width:8px;height:8px;border-radius:50%;background:var(--n-brass);flex:none}
+.nad-mcard .nad-shade{position:absolute;inset:0;background:linear-gradient(185deg,transparent 28%,color-mix(in srgb, var(--n-bg) 45%, transparent) 62%,color-mix(in srgb, var(--n-bg) 94%, transparent) 100%)}
+.nad-mcard .nad-gicon{position:absolute;top:8px;inset-inline-start:8px;width:34px;height:34px;border-radius:11px}
+.nad-mcard .nad-gicon svg{width:16px;height:16px}
+.nad-mcard .nad-gmeta{position:absolute;inset-inline:10px;bottom:8px;display:flex;align-items:flex-end;justify-content:space-between;gap:8px}
+.nad-mcard .nad-gmeta h3{font-size:14px;text-shadow:0 2px 10px rgba(0,0,0,.6)}
+.nad-mcard .nad-gmeta p{font-size:10px;color:var(--n-mut2);margin-top:1px}

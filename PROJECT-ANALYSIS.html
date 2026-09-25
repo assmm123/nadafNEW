@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>تحليل مشروع NADAF | نداف</title>
+<style>
+  :root{
+    --bg:#f6f7f9; --card:#ffffff; --ink:#12181f; --muted:#5c6b7a;
+    --line:#e3e8ee; --accent:#1e5eff; --ok:#0f9d58; --warn:#e8a33d;
+    --bad:#d93025; --soft:#eef3ff;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--ink);
+    font-family:"Segoe UI",Tahoma,"Noto Sans Arabic",sans-serif;line-height:1.75}
+  .wrap{max-width:1080px;margin:0 auto;padding:32px 20px 64px}
+  header{background:linear-gradient(135deg,#1e3a8a,#1e5eff);color:#fff;
+    border-radius:18px;padding:34px 30px;margin-bottom:26px}
+  header h1{margin:0 0 8px;font-size:28px}
+  header p{margin:0;opacity:.9;font-size:15px}
+  .score{display:flex;gap:14px;flex-wrap:wrap;margin-top:22px}
+  .score .pill{background:rgba(255,255,255,.16);border:1px solid rgba(255,255,255,.28);
+    border-radius:12px;padding:10px 16px;font-size:14px}
+  .score .pill b{display:block;font-size:22px;margin-top:2px}
+  h2{font-size:20px;margin:34px 0 14px;padding-bottom:8px;border-bottom:2px solid var(--line)}
+  .card{background:var(--card);border:1px solid var(--line);border-radius:14px;
+    padding:20px 22px;margin-bottom:16px}
+  .grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:14px}
+  .stat{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:16px 18px}
+  .stat .n{font-size:26px;font-weight:700;color:var(--accent)}
+  .stat .l{font-size:13px;color:var(--muted)}
+  table{width:100%;border-collapse:collapse;font-size:14px}
+  th,td{padding:10px 12px;border-bottom:1px solid var(--line);text-align:right;vertical-align:top}
+  th{background:var(--soft);font-weight:600}
+  .sev{display:inline-block;padding:3px 10px;border-radius:20px;font-size:12px;font-weight:600;white-space:nowrap}
+  .p0{background:#fdecea;color:var(--bad)}
+  .p1{background:#fff4e5;color:#b26a00}
+  .p2{background:#eef3ff;color:var(--accent)}
+  ul{margin:8px 0 0;padding-inline-start:20px}
+  li{margin-bottom:6px}
+  code{background:var(--soft);color:#1e3a8a;padding:2px 6px;border-radius:5px;font-size:13px}
+  .bar{height:9px;background:var(--line);border-radius:6px;overflow:hidden;margin-top:6px}
+  .bar span{display:block;height:100%;border-radius:6px}
+  .good{background:var(--ok)} .mid{background:var(--warn)} .low{background:var(--bad)}
+  .note{border-inline-start:4px solid var(--accent);background:var(--soft);
+    padding:12px 16px;border-radius:0 10px 10px 0;margin:12px 0;font-size:14px}
+  .split{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+  @media(max-width:720px){.split{grid-template-columns:1fr}}
+  footer{text-align:center;color:var(--muted);font-size:13px;margin-top:40px}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<header>
+  <h1>تحليل مشروع NADAF | نداف</h1>
+  <p>متجر إلكتروني — Laravel 13 + Livewire 3 + Filament 3 &nbsp;·&nbsp; تحليل 25 سبتمبر 2026</p>
+  <div class="score">
+    <div class="pill">جودة الكود<b>ممتازة</b></div>
+    <div class="pill">الاختبارات<b>391 ✓</b></div>
+    <div class="pill">جاهزية البيع<b>غير جاهز</b></div>
+    <div class="pill">الأمان التشغيلي<b>يحتاج إصلاح</b></div>
+  </div>
+</header>
+
+<h2>الخلاصة</h2>
+<div class="card">
+  <p style="margin-top:0">المشروع <b>مبني بإتقان هندسي لافت</b> — منطق البيع والمخزون محمي بقفل الصفوف داخل معاملات
+  قاعدة البيانات، والصلاحيات تُفرض عند التنفيذ لا بإخفاء القوائم، ومجموعة الاختبارات (391 اختبار، 1426 تأكيدًا)
+  تتجاوز الوظائف لتفرض <b>قواعد معمارية</b> على الكود نفسه.</p>
+  <p>لكن المتجر <b>فارغ تجاريًا</b>: فيه منتجان فقط (أحدهما باسم <code>فففف</code>)، وكل عناصر الطلبات الـ30
+  تشير إلى منتجات محذوفة. أي أن النظام سليم لكنه <b>لا يحتوي على بضاعة حقيقية</b>، ولا يوجد مستودع
+  <code>git</code> يحمي هذا العمل.</p>
+  <div class="note"><b>الحكم:</b> الأساس التقني قوي وجاهز — ما ينقصه هو المحتوى التجاري، وإغلاق ثلاث ثغرات
+  تشغيلية (تصحيح الأخطاء مفعّل، نسخ <code>.env</code> الاحتياطية، غياب Git).</div>
+</div>
+
+<h2>حجم المشروع</h2>
+<div class="grid">
+  <div class="stat"><div class="n">19,667</div><div class="l">سطر كود (app + القوالب)</div></div>
+  <div class="stat"><div class="n">25</div><div class="l">موديلًا</div></div>
+  <div class="stat"><div class="n">27</div><div class="l">تهجيرًا</div></div>
+  <div class="stat"><div class="n">14</div><div class="l">موردًا في لوحة الأدمن</div></div>
+  <div class="stat"><div class="n">15</div><div class="l">سياسة صلاحيات</div></div>
+  <div class="stat"><div class="n">57</div><div class="l">قالب Blade</div></div>
+  <div class="stat"><div class="n">8</div><div class="l">خدمة (Service)</div></div>
+  <div class="stat"><div class="n">252</div><div class="l">مفتاح ترجمة (ar/en)</div></div>
+</div>
+
+<h2>نقاط القوة</h2>
+
+<div class="card">
+  <b>١. أمان المعاملات المالية</b>
+  <ul>
+    <li><code>CheckoutService</code> يُعيد التحقق من المخزون والكوبون <b>داخل المعاملة</b> مع
+      <code>lockForUpdate()</code> — فلا يمكن لطلبين متزامنين بيع آخر قطعة أو تجاوز حدّ كوبون.</li>
+    <li><code>StockService::record()</code> ذرّي، يرفض الرصيد السالب، ويوثّق الرصيد قبل وبعد كل حركة.</li>
+    <li>إلغاء الطلب يرجّع الكميات تلقائيًا، وإعادة تفعيله تعيد خصمها فلا يتضخّم المخزون.</li>
+  </ul>
+</div>
+
+<div class="card">
+  <b>٢. صلاحيات حقيقية لا تجميلية</b>
+  <ul>
+    <li>مصفوفة الأدوار في ملف واحد <code>app/Support/StaffPermissions.php</code> (مالك · مدير متجر ·
+      مسؤول مخزون · دعم عملاء).</li>
+    <li>كل إجراء يُفحص عبر سياسات Laravel عند التنفيذ — فتح رابط مباشر لا يتجاوز الحماية.</li>
+    <li>حساب المالك محمي: لا أحد يقدر على تعديله أو حظره ولو مُنح صلاحية إدارة المستخدمين.</li>
+    <li>كل مورد في Filament له سياسة — وهذا مُختبَر آليًا لأن Filament يسمح بالوصول عند <b>غياب</b> السياسة.</li>
+  </ul>
+</div>
+
+<div class="card">
+  <b>٣. مجموعة اختبارات استثنائية</b>
+  <p style="margin-bottom:6px">الملف <code>AiCodeSmellTest.php</code> يفرض قواعد معمارية تمنع أخطاء الكود
+  المولَّد المتكرّرة:</p>
+  <ul>
+    <li>لا <code>dd()</code> / <code>dump()</code> / <code>console.log()</code> متروكة في أي ملف.</li>
+    <li>لا <code>TODO</code> / <code>FIXME</code>، وكل مسار له اسم، وكل قالب مُشار إليه موجود.</li>
+    <li>كل مفتاح ترجمة موجود بالعربية <b>والإنجليزية</b> — النتيجة: 252 مقابل 252، صفر نقص.</li>
+    <li>كل تهجير له <code>down()</code>، ولا أسرار مكتوبة في الكود.</li>
+    <li>لا استعلامات N+1 في الصفحات الرئيسية، وكل صورة لها نصّ بديل <code>alt</code>.</li>
+  </ul>
+  <div class="note" style="margin-bottom:0">نتيجة التشغيل الفعلي: <b>391 اختبارًا ناجحًا</b> — 1426 تأكيدًا في 213 ثانية.</div>
+</div>
+
+<div class="card">
+  <b>٤. تكامل تشغيلي واسع</b>
+  <ul>
+    <li>ثنائية اللغة والعملة، تثبيت سعر الصرف لحظة الطلب، أسعار جملة تلقائية، كوبونات.</li>
+    <li>بوابة «إثبات الدفع» تعمل في الخدمة لا في الواجهة — فلا مسار يفلت منها.</li>
+    <li>نظام جرد كامل: حركات، فواتير شراء، موردون، جرد فعلي بتسوية الفروقات.</li>
+    <li>إشعارات تيليجرام بقناتين منفصلتين، فاتورة بوضعين (إيصال مبدئي / فاتورة معتمدة بختم ذهبي).</li>
+    <li>PWA كامل: manifest، Service Worker، أيقونات، صفحة عدم اتصال.</li>
+  </ul>
+</div>
+
+<h2>المشكلات</h2>
+<table>
+  <tr><th style="width:78px">الخطورة</th><th>المشكلة</th><th>التأثير والإصلاح</th></tr>
+  <tr>
+    <td><span class="sev p0">حرج</span></td>
+    <td><b>الكتالوج فارغ تقريبًا</b><br>منتجان فقط: <code>كرافات</code> و <code>فففف</code>،
+      ومتغيّران، وصفر كوبونات/موردين</td>
+    <td>المتجر غير قابل للبيع. ملف <code>products-3-9-backup-20260916-220935.json</code> يوضح أن
+      المنتجات حُذفت في 16 سبتمبر بسبب «بيانات تجريبية أُنشئت بالخطأ — بأمر المالك» ولم تُستبدل.
+      <b>الإصلاح:</b> إدخال المنتجات الحقيقية مع صورها وأسعارها.</td>
+  </tr>
+  <tr>
+    <td><span class="sev p0">حرج</span></td>
+    <td><b>لا يوجد مستودع Git</b></td>
+    <td><code>git status</code> يفشل — لا يوجد مجلد <code>.git</code>. 19 ألف سطر بلا تاريخ ولا استرجاع.
+      <b>الإصلاح:</b> <code>git init</code> + أول commit فورًا.</td>
+  </tr>
+  <tr>
+    <td><span class="sev p0">حرج</span></td>
+    <td><b>نسخ <code>.env</code> الاحتياطية في جذر المشروع</b><br>
+      <code>.env.bak-20260917</code> و <code>.env.bak-lan</code></td>
+    <td>الملفان يحتويان <code>APP_KEY</code> وأسرارًا، و<code>.gitignore</code> يغطي
+      <code>.env</code> و <code>.env.backup</code> فقط — <b>لا يغطي <code>.env.bak-*</code></b>.
+      دليل النشر يعتمد FTP، فأي رفع كامل ينشر المفاتيح. <b>الإصلاح:</b> حذفهما أو إضافتهما للتجاهل.</td>
+  </tr>
+  <tr>
+    <td><span class="sev p1">مهم</span></td>
+    <td><b><code>APP_DEBUG=true</code> و <code>APP_ENV=local</code></b></td>
+    <td>أي خطأ يعرض مسار الملف والبيانات للزائر. <b>الإصلاح:</b> <code>false</code> و
+      <code>production</code> قبل الإطلاق.</td>
+  </tr>
+  <tr>
+    <td><span class="sev p1">مهم</span></td>
+    <td><b>البريد غير مفعّل فعليًا</b><br><code>MAIL_MAILER=log</code> واسم المستخدم/كلمة المرور <code>null</code></td>
+    <td>القراءة توحي أن استعادة كلمة المرور تعمل، لكن الرسائل تُكتب في السجل فقط ولا تُرسل.
+      <b>الإصلاح:</b> إعداد مزود SMTP فعلي كما في DEPLOY.md.</td>
+  </tr>
+  <tr>
+    <td><span class="sev p1">مهم</span></td>
+    <td><b>كل عناصر الطلبات يتيمة</b><br>30 عنصرًا كلها بـ <code>product_id = NULL</code></td>
+    <td>الطلبات الـ29 لا تعرض أسماء منتجاتها لأن المنتجات حُذفت. بيانات تجريبية يجب تنظيفها
+      قبل الاستلام الفعلي.</td>
+  </tr>
+  <tr>
+    <td><span class="sev p2">تحسين</span></td>
+    <td><b>ملفات زائدة في الجذر</b></td>
+    <td><code>$v)-&gt;implode(PHP_EOL);</code> (بقايا أمر shell معطوب)،
+      <code>_m_home.png</code> (434KB)، <code>NADAF-Chat-Concept.html</code>،
+      <code>admin-preview.html</code>، <code>_legacy-views/</code>،
+      <code>.phpunit.result.cache</code>، ومجلدات أدوات <code>.kilo</code> · <code>.mimosa</code> · <code>.zcode</code>.
+      ويوجد <code>AGENTS.md</code> و <code>CLAUDE.md</code> متطابقان تمامًا.</td>
+  </tr>
+  <tr>
+    <td><span class="sev p2">تحسين</span></td>
+    <td><b>ملفات ضخمة وصف متزامن</b></td>
+    <td><code>OrderResource.php</code> 942 سطرًا و <code>Settings.php</code> 536 — مرشّحان للتقسيم.
+      و<code>QUEUE_CONNECTION=sync</code> يجعل إشعارات تيليجرام تعمل داخل طلب الشراء فتبطّئه.</td>
+  </tr>
+</table>
+
+<h2>مؤشرات الجاهزية</h2>
+<div class="card">
+  <div class="split">
+    <div>
+      <div style="font-size:14px">سلامة منطق البيع والمخزون</div>
+      <div class="bar"><span class="good" style="width:95%"></span></div>
+      <div style="font-size:14px;margin-top:14px">تغطية الاختبارات والقواعد المعمارية</div>
+      <div class="bar"><span class="good" style="width:92%"></span></div>
+      <div style="font-size:14px;margin-top:14px">نظام الصلاحيات</div>
+      <div class="bar"><span class="good" style="width:90%"></span></div>
+    </div>
+    <div>
+      <div style="font-size:14px">المحتوى التجاري (المنتجات)</div>
+      <div class="bar"><span class="low" style="width:8%"></span></div>
+      <div style="font-size:14px;margin-top:14px">الأمان التشغيلي والإعدادات</div>
+      <div class="bar"><span class="mid" style="width:45%"></span></div>
+      <div style="font-size:14px;margin-top:14px">حفظ الإصدارات والنسخ الاحتياطي</div>
+      <div class="bar"><span class="low" style="width:5%"></span></div>
+    </div>
+  </div>
+</div>
+
+<h2>خطة العمل المقترحة</h2>
+<div class="card">
+  <ul>
+    <li><b>فورًا —</b> <code>git init</code> وأول commit بعد إضافة <code>.env.bak-*</code> للتجاهل، وحذف النسخ الاحتياطية الحاوية على الأسرار.</li>
+    <li><b>قبل الإطلاق —</b> <code>APP_DEBUG=false</code> و <code>APP_ENV=production</code>، وإعداد SMTP حقيقي وتجربة زر اختبار الإشعار.</li>
+    <li><b>جوهري —</b> إدخال المنتجات الحقيقية (صور، أسعار، متغيّرات، مخزون) ثم تنظيف الطلبات التجريبية الـ29.</li>
+    <li><b>لاحقًا —</b> حذف الملفات الزائدة، تقسيم <code>OrderResource</code>، وتفعيل عامل طوابير (queue worker) للإشعارات.</li>
+  </ul>
+</div>
+
+<footer>تقرير تحليلي مبني على فحص الكود الفعلي وقاعدة البيانات وتشغيل مجموعة الاختبارات كاملة.</footer>
+</div>
+</body>
+</html>

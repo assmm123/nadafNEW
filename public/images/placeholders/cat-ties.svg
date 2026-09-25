@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 300">
+  <rect width="400" height="300" fill="#1A2A3A"/>
+  <circle cx="200" cy="160" r="95" fill="#FFFFFF" opacity="0.05"/>
+  <path d="M200 50 L172 87 L200 118 L228 87 Z" fill="#C9A84C"/>
+  <path d="M183 115 L217 115 L238 225 L200 265 L162 225 Z" fill="#C9A84C"/>
+  <text x="200" y="289" text-anchor="middle" font-family="Tajawal, Arial, sans-serif" font-weight="700" font-size="22" fill="#FFFFFF">كرافات</text>
+</svg>

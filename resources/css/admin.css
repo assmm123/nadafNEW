@@ -1,0 +1,752 @@
+@import 'tailwindcss';
+
+/* إصلاح توافق Tailwind v4 — شبكة أعمدة Filament (اقرأ الملف لتفهم السبب) */
+@import './filament-v4-compat.css';
+
+/* نظام هوية نداف — أصناف .nad-* التي تستخدمها قوالب اللوحة.
+   بدونها تُبنى «منتجاتي» في HTML كاملة لكن بلا تنسيق فتبدو فارغة. */
+@import './nad-components.css';
+
+/* ══════════════════════════════════════════════════════════════════
+   CSS مكوّنات Filament — كان غائبًا تمامًا.
+   Filament يوزّع تنسيق مكوّناته في ملفات CSS منفصلة (ترقيم · اختيار · رفع ملفات…)
+   وكان المشروع يستورد Tailwind وحده، فسقطت كل هذه القواعد.
+   وأظهرها للعيان: حقل «لكل صفحة» كان يظهر **مرتين** — لأن قواعد إخفاء
+   النسخة المدمجة (fi-compact) موجودة في pagination.css وحده:
+       .fi-pagination-records-per-page-select:not(.fi-compact){display:none}
+   وبغيابها رُسم حقلان فوق بعضهما، فظهر سهمان متجاوران للمتصفح.
+   الملف CSS خالص بلا @apply ولا theme() ⇒ متوافق مع Tailwind v4.
+   ══════════════════════════════════════════════════════════════════ */
+@import '../../vendor/filament/support/resources/css/components/pagination.css';
+
+@source '../../vendor/filament/**/*.blade.php';
+@source '../../storage/framework/views/*.php';
+/* مصادر القوالب مباشرةً — بدونه لا تُولَّد أصناف Tailwind المستخدمة في
+   ودجات اللوحة قبل أول رسم للصفحة (الملفات المترجمة لا تُنشأ إلا بعد الرسم). */
+@source '../views/**/*.blade.php';
+
+/* ══════════════════════════════════════════════════════════════════
+   لوحة التحكم المحاسبية — منقول حرفيًا من NADAF-Dashboard-Concept.html
+   كل المحدِّدات مسبوقة بـ.nad-dash حتى لا تتعارض مع أصناف Filament.
+   ══════════════════════════════════════════════════════════════════ */
+.nad-dash{
+  --d-bg:#0F1319; --d-sf:#171D26; --d-sf2:#1B222D;
+  --d-line:rgba(255,255,255,.08); --d-line2:rgba(255,255,255,.14);
+  --d-brass:#D2A24E; --d-champ:#EAC97F;
+  --d-ivory:#F1ECE1; --d-mut:#A79F8F; --d-dim:#8A93A3;
+  --d-ok:#7FD3A2; --d-warn:#E8B98A; --d-err:#E9A3B2; --d-info:#9DC0DC;
+  --d-num:'Tajawal',ui-monospace,monospace;
+  color:var(--d-ivory);font-size:13.5px;line-height:1.6
+}
+.nad-dash *{box-sizing:border-box}
+.nad-dash h1,.nad-dash h2{font-family:'El Messiri','Almarai',sans-serif;font-weight:600;letter-spacing:-.01em}
+.nad-dash a{color:inherit;text-decoration:none}
+.nad-dash .n{font-variant-numeric:tabular-nums;font-feature-settings:'tnum';letter-spacing:.01em}
+
+/* شريط الأدوات */
+.nad-dash .top{display:flex;align-items:center;gap:14px;flex-wrap:wrap;padding-bottom:16px;border-bottom:1px solid var(--d-line)}
+.nad-dash .top h1{font-size:19px}
+.nad-dash .top .sub{font-size:11.5px;color:var(--d-dim)}
+.nad-dash .seg{display:inline-flex;border:1px solid var(--d-line2);border-radius:7px;overflow:hidden}
+.nad-dash .seg button{padding:6px 13px;font-size:12px;font-weight:500;color:var(--d-mut);border-inline-end:1px solid var(--d-line)}
+.nad-dash .seg button:last-child{border-inline-end:0}
+.nad-dash .seg button[aria-pressed="true"]{background:var(--d-brass);color:#17110A;font-weight:700}
+.nad-dash .tools{margin-inline-start:auto;display:flex;gap:7px;flex-wrap:wrap}
+.nad-dash .tool{padding:6px 13px;font-size:12px;font-weight:500;border:1px solid var(--d-line2);border-radius:7px;color:var(--d-mut);transition:.15s;display:inline-block}
+.nad-dash .tool:hover{border-color:var(--d-brass);color:var(--d-champ)}
+.nad-dash .tool.solid{background:var(--d-brass);color:#17110A;border-color:var(--d-brass);font-weight:700}
+.nad-dash .tool.solid:hover{background:var(--d-champ)}
+
+/* عنوان قسم */
+.nad-dash .sh{display:flex;align-items:baseline;gap:10px;padding:26px 0 10px}
+.nad-dash .sh h2{font-size:15px}
+.nad-dash .sh .k{font-size:10.5px;font-weight:700;letter-spacing:.16em;text-transform:uppercase;color:var(--d-brass)}
+.nad-dash .sh .n{margin-inline-start:auto;font-size:11px;color:var(--d-dim)}
+
+/* ١) يحتاج إجراءك */
+.nad-dash .acts{display:grid;grid-template-columns:repeat(5,1fr);gap:1px;background:var(--d-line);border:1px solid var(--d-line);border-radius:8px;overflow:hidden}
+.nad-dash .act{background:var(--d-sf);padding:12px 14px;display:flex;flex-direction:column;gap:3px;transition:.15s}
+.nad-dash .act:hover{background:var(--d-sf2)}
+.nad-dash .act .v{font-size:25px;font-weight:500;line-height:1.1}
+.nad-dash .act .l{font-size:11.5px;color:var(--d-ivory);font-weight:500}
+.nad-dash .act .h{font-size:10.5px;color:var(--d-dim)}
+.nad-dash .act.zero{opacity:.38}
+
+/* ٢) المحاسبة */
+.nad-dash .acc{display:grid;grid-template-columns:minmax(0,.92fr) minmax(0,1.08fr);gap:14px}
+.nad-dash .panel{background:var(--d-sf);border:1px solid var(--d-line);border-radius:8px}
+.nad-dash .panel-h{display:flex;align-items:center;gap:10px;padding:11px 14px;border-bottom:1px solid var(--d-line);font-size:11.5px;color:var(--d-mut);font-weight:500}
+.nad-dash .panel-h .r{margin-inline-start:auto;display:flex;gap:6px}
+.nad-dash .ledger{width:100%;border-collapse:collapse}
+.nad-dash .ledger td{padding:8px 14px;font-size:13px;border-bottom:1px solid var(--d-line)}
+.nad-dash .ledger tr:last-child td{border-bottom:0}
+.nad-dash .ledger td:first-child{color:var(--d-mut)}
+.nad-dash .ledger td:last-child{text-align:end;font-weight:500}
+.nad-dash .ledger tr.grp td{background:var(--d-sf2);color:var(--d-dim);font-size:10.5px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;padding:6px 14px}
+.nad-dash .ledger tr.sum td{border-top:1px solid var(--d-line2);font-weight:700}
+.nad-dash .ledger tr.sum td:first-child{color:var(--d-ivory)}
+.nad-dash .ledger tr.total td{border-top:2px solid var(--d-brass);background:rgba(210,162,78,.06)}
+.nad-dash .ledger tr.total td:last-child{font-size:16px;color:var(--d-champ)}
+.nad-dash .ledger .pos{color:var(--d-ok)}
+.nad-dash .ledger .neg{color:var(--d-err)}
+.nad-dash .ledger .pct{color:var(--d-champ);font-weight:700}
+
+/* الرسم البياني */
+.nad-dash .chart{padding:14px}
+.nad-dash .chart svg{width:100%;height:186px;display:block}
+.nad-dash .chart .xlab{display:flex;justify-content:space-between;font-size:10px;color:var(--d-dim);padding-top:6px}
+.nad-dash .legend{display:flex;gap:16px;font-size:11px;color:var(--d-dim);padding:0 14px 12px;flex-wrap:wrap}
+.nad-dash .legend i{display:inline-block;width:8px;height:8px;border-radius:2px;margin-inline-end:5px;vertical-align:middle}
+
+/* ٣) المركز المالي */
+.nad-dash .fin{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.nad-dash .fin .panel-h{justify-content:space-between}
+.nad-dash .fin table{width:100%;border-collapse:collapse}
+.nad-dash .fin td{padding:9px 14px;font-size:13px;border-bottom:1px solid var(--d-line)}
+.nad-dash .fin tr:last-child td{border-bottom:0}
+.nad-dash .fin td:first-child{color:var(--d-mut)}
+.nad-dash .fin td:last-child{text-align:end;font-weight:500}
+.nad-dash .fin .net td{border-top:1px solid var(--d-line2);background:rgba(210,162,78,.06);font-weight:700}
+.nad-dash .fin .net td:first-child{color:var(--d-ivory)}
+.nad-dash .fin .net td:last-child{color:var(--d-champ);font-size:15px}
+.nad-dash .fin .eq{font-size:10.5px;color:var(--d-dim);padding:8px 14px;border-top:1px dashed var(--d-line)}
+
+/* ٤) أحدث الطلبات */
+.nad-dash .tbl{width:100%;border-collapse:collapse}
+.nad-dash .tbl th{font-size:10.5px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--d-dim);text-align:start;padding:9px 14px;border-bottom:1px solid var(--d-line2);background:var(--d-sf2)}
+.nad-dash .tbl td{padding:9px 14px;font-size:12.5px;border-bottom:1px solid var(--d-line)}
+.nad-dash .tbl tr:last-child td{border-bottom:0}
+.nad-dash .tbl tbody tr:hover{background:var(--d-sf2)}
+.nad-dash .tbl .code{font-family:ui-monospace,monospace;font-size:11.5px;color:var(--d-brass);direction:ltr}
+.nad-dash .tbl .amt{text-align:end;font-weight:500}
+.nad-dash .tbl .st{display:inline-flex;align-items:center;gap:7px}
+.nad-dash .tbl .st i{width:7px;height:7px;border-radius:50%;flex:none}
+.nad-dash .tbl .pay{display:inline-flex;align-items:center;gap:6px;font-size:11.5px}
+
+.nad-dash .foot{padding-top:26px;font-size:11px;color:var(--d-dim);border-top:1px solid var(--d-line);margin-top:32px;display:flex;justify-content:space-between;gap:14px;flex-wrap:wrap}
+
+@media (max-width:1080px){
+  .nad-dash .acts{grid-template-columns:repeat(3,1fr)}
+  .nad-dash .acc,.nad-dash .fin{grid-template-columns:1fr}
+}
+@media (max-width:620px){
+  .nad-dash .acts{grid-template-columns:repeat(2,1fr)}
+}
+
+/* ═══ الخطوط موحّدة مع المتجر ═══
+   أُزيلت تعريفات Rubik: كانت هوية ثالثة منفصلة عن المتجر. الآن الخطوط هي
+   نفسها في اللوحة والمتجر — Tajawal للمتن وEl Messiri للعناوين — وتُحمَّل
+   عبر Vite::fonts() من نفس مصدر خطوط المتجر (laravel-vite-plugin/fonts).
+   كذلك أُزيل @import الخارجي الذي كان Vite يحذّره ويتجاهله. */
+
+/* الوضع الداكن بالكلاس — Filament يضع .dark على <html> عبر JS والـ render hook */
+@custom-variant dark (&:where(.dark, .dark *));
+
+/* ═══════════════════════════════════════════════════════════════════
+   ثيم لوحة الأدمن المنعزل — هوية نداف (الإصدار الثالث / admin-v3.html)
+   خلفية #0F1319 · سطح #171D26 · سطح ثانوي #1B222D
+   نحاسي-أزرق #D2A24E (hover #EAC97F) · أخضر #34D399 · كهرماني #FBBF24
+   أحمر #F87171 · أزرق #60A5FA · نص #F1ECE1/#A79F8F/#8A93A3 · خط Rubik
+   زوايا: 14px (r) · 20px (r-lg) · 8px (r-sm)
+   ملاحظة: كلاس fi-panel-admin يوضع على <body> (وليس html) — انظر
+   vendor/filament/filament/resources/views/components/layout/base.blade.php
+   لذلك المحددات تعمل على body.fi-panel-admin مع إبقاء صيغة html.fi-panel-admin
+   الاحتياطية كما هي.
+   ═══════════════════════════════════════════════════════════════════ */
+
+/* ─── 1) رماديات Tailwind v4 داخل ثيم الأدمن فقط (عزل كامل عن app.css) ───
+   ⚠️ الاتجاه هنا مقصود: 50…300 **فاتحة** (نصوص)، و800…950 **داكنة** (أسطح).
+
+   كانت مقلوبة (50…300 داكنة)، وFilament يبني أوضاع المرور والثانوي هكذا:
+       dark:text-gray-400              نص ثانوي
+       dark:group-hover:text-gray-200  نص عند المرور  ← كان يصير داكنًا فيختفي
+   فكانت نصوص التبويبات تختفي عند المرور، ونصوص أزرار الجدول «عرض» و«الفاتورة»
+   (color = gray) تبدو شبه شفافة. الأسماء هي أسماء Tailwind، ودلالتها محفوظة. */
+@theme {
+    --font-sans: 'Tajawal', system-ui, sans-serif;
+
+    --color-gray-50: #F7F4ED;   /* فاتح جدًا */
+    --color-gray-100: #F1ECE1;  /* --txt — العاجي */
+    --color-gray-200: #E8E2D6;  /* نص المرور */
+    --color-gray-300: #D6CFC0;  /* فاتح */
+    --color-gray-400: #A79F8F;  /* --txt2 — نص ثانوي */
+    --color-gray-500: #8A93A3;  /* --txt3 — نص خافت */
+    --color-gray-600: #6E7686;  /* خافت أكثر */
+    --color-gray-700: #4E5665;  /* حدود/خلفيات مرور */
+    --color-gray-800: #171D26;  /* --surface */
+    --color-gray-900: #0F1319;  /* --bg */
+    --color-gray-950: #0A0D12;  /* الأعمق */
+}
+
+/* ─── 1ب) جسر ألوان Filament إلى أصناف Tailwind ───
+   Filament يعرّف ألوانه كثالثيات RGB على عنصر اللوحة نفسه
+   (‎--primary-500: 210,162,78)، ويبني أصناف Tailwind عليها في theme.css
+   الخاص به. وحين لا يُستورد theme.css — لأن Tailwind v4 لا يستطيع استيراده —
+   لا توجد --color-primary-* أصلًا، فلا تُولَّد bg-primary-* ولا text-success-*.
+   نفس أصل مشكلة شبكة الأعمدة والأصناف الديناميكية custom-*، وهذه ثالثة أفرادها.
+
+   وأثرها هنا ملموس لا نظري:
+     • زر «حفظ التسويات» في الجرد الفعلي بلا خلفية — نص أبيض على لا شيء
+     • أزرار تصدير التقرير (bg-navy-900) شفافة
+     • أعمدة الرسم البياني اليومي لا تُرى (from-gold-600 غير مُولَّد)
+
+   و`inline` ضروري لا اختياري: ألوان Filament معرَّفة على **عنصر اللوحة** لا
+   على :root، وvar() داخل خاصية مخصّصة تُحلّ في سياق مكان التعريف. فلو كُتب
+   @theme عادي لَتعذّر حلّ var(--primary-500) على :root وصارت القيمة باطلة.
+   ومع inline تُكتب rgb(var(--primary-500)) داخل كل صنف، فتُحلّ على العنصر
+   الحامل للصنف — وهو الذي يرث المتغيّر من اللوحة. */
+@theme inline {
+    --color-primary-50: rgb(var(--primary-50));
+    --color-primary-100: rgb(var(--primary-100));
+    --color-primary-200: rgb(var(--primary-200));
+    --color-primary-300: rgb(var(--primary-300));
+    --color-primary-400: rgb(var(--primary-400));
+    --color-primary-500: rgb(var(--primary-500));
+    --color-primary-600: rgb(var(--primary-600));
+    --color-primary-700: rgb(var(--primary-700));
+    --color-primary-800: rgb(var(--primary-800));
+    --color-primary-900: rgb(var(--primary-900));
+    --color-primary-950: rgb(var(--primary-950));
+
+    --color-success-50: rgb(var(--success-50));
+    --color-success-100: rgb(var(--success-100));
+    --color-success-200: rgb(var(--success-200));
+    --color-success-300: rgb(var(--success-300));
+    --color-success-400: rgb(var(--success-400));
+    --color-success-500: rgb(var(--success-500));
+    --color-success-600: rgb(var(--success-600));
+    --color-success-700: rgb(var(--success-700));
+    --color-success-800: rgb(var(--success-800));
+    --color-success-900: rgb(var(--success-900));
+    --color-success-950: rgb(var(--success-950));
+
+    --color-danger-50: rgb(var(--danger-50));
+    --color-danger-100: rgb(var(--danger-100));
+    --color-danger-200: rgb(var(--danger-200));
+    --color-danger-300: rgb(var(--danger-300));
+    --color-danger-400: rgb(var(--danger-400));
+    --color-danger-500: rgb(var(--danger-500));
+    --color-danger-600: rgb(var(--danger-600));
+    --color-danger-700: rgb(var(--danger-700));
+    --color-danger-800: rgb(var(--danger-800));
+    --color-danger-900: rgb(var(--danger-900));
+    --color-danger-950: rgb(var(--danger-950));
+
+    --color-warning-50: rgb(var(--warning-50));
+    --color-warning-100: rgb(var(--warning-100));
+    --color-warning-200: rgb(var(--warning-200));
+    --color-warning-300: rgb(var(--warning-300));
+    --color-warning-400: rgb(var(--warning-400));
+    --color-warning-500: rgb(var(--warning-500));
+    --color-warning-600: rgb(var(--warning-600));
+    --color-warning-700: rgb(var(--warning-700));
+    --color-warning-800: rgb(var(--warning-800));
+    --color-warning-900: rgb(var(--warning-900));
+    --color-warning-950: rgb(var(--warning-950));
+
+    --color-info-50: rgb(var(--info-50));
+    --color-info-100: rgb(var(--info-100));
+    --color-info-200: rgb(var(--info-200));
+    --color-info-300: rgb(var(--info-300));
+    --color-info-400: rgb(var(--info-400));
+    --color-info-500: rgb(var(--info-500));
+    --color-info-600: rgb(var(--info-600));
+    --color-info-700: rgb(var(--info-700));
+    --color-info-800: rgb(var(--info-800));
+    --color-info-900: rgb(var(--info-900));
+    --color-info-950: rgb(var(--info-950));
+}
+
+/* ─── 2) متغيرات Filament الرمادية (صيغة space-separated RGB) على جذر اللوحة ─── */
+html.fi-panel-admin,
+body.fi-panel-admin,
+html.dark body.fi-panel-admin{
+  --gray-50:247,244,237;
+  --gray-100:241,236,225;
+  --gray-200:232,226,214;
+  --gray-300:214,207,192;
+  --gray-400:167,159,143;
+  --gray-500:138,147,163;
+  --gray-600:110,118,134;
+  --gray-700:78,86,101;
+  --gray-800:23,29,38;
+  --gray-900:15,19,25;
+  --gray-950:10,13,18;
+  color-scheme:dark;
+}
+
+/* ─── 2ب) سهم حقول الاختيار: سهم واحد لا سهمان ───
+   Filament يرسم سهمه بخلفية SVG في select.css، ويفترض أن `appearance:none`
+   يأتي من Tailwind Forms — وهو غير مستخدم هنا. فبقي سهم المتصفح الأصلي
+   إلى جانب سهم Filament ⇒ سهمان في كل قائمة منسدلة. */
+body.fi-panel-admin select:not(.choices){
+  -webkit-appearance:none;
+  appearance:none;
+  background-image:url("data:image/svg+xml;charset=utf-8,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3E%3Cpath stroke='%23A79F8F' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='m6 8 4 4 4-4'/%3E%3C/svg%3E");
+  background-repeat:no-repeat;
+  background-position:left .5rem center;
+  background-size:1.25em 1.25em;
+}
+
+/* ─── 3) رموز الثيم (tokens التصميم المعتمد) + لوحات الألوان الوظيفية ─── */
+html.fi-panel-admin,
+body.fi-panel-admin,
+html.dark body.fi-panel-admin{
+  --adm-bg:#0F1319;
+  --adm-surface:#171D26;
+  --adm-surface2:#181C28;
+  --adm-surface3:#1B222D;
+  --adm-border:rgba(255,255,255,.06);
+  --adm-border2:rgba(255,255,255,.12);
+  --adm-accent:#D2A24E;
+  --adm-accent-hover:#EAC97F;
+  --adm-accent-bg:rgba(210,162,78,.12);
+  --adm-accent-bd:rgba(210,162,78,.3);
+  --adm-green:#34D399;  --adm-green-bg:rgba(52,211,153,.1);
+  --adm-yellow:#FBBF24; --adm-yellow-bg:rgba(251,191,36,.1);
+  --adm-red:#F87171;    --adm-red-bg:rgba(248,113,113,.1);
+  --adm-blue:#60A5FA;   --adm-blue-bg:rgba(96,165,250,.1);
+  --adm-txt:#F1ECE1;
+  --adm-txt2:#A79F8F;
+  --adm-txt3:#8A93A3;
+  --adm-r:14px; --adm-r-lg:20px; --adm-r-sm:8px;
+  --adm-sh:0 2px 8px rgba(0,0,0,.25);
+  --adm-sh2:0 8px 30px rgba(0,0,0,.35);
+  --adm-grad:linear-gradient(135deg,#D2A24E,#8E6222);
+
+  /* لوحة primary نحاسية = نفس لون المتجر (#D2A24E) — صيغة Filament RGB المفصولة بمسافات.
+     كانت indigo (rgb 99,102,241) وهي التي كانت تُظهر اللوحة بنفسجية رغم تغيير #6366F1،
+     لأن Filament يقرأ اللون من هذه المتغيّرات لا من قيمة الـhex. */
+  --primary-50:250,244,232; --primary-100:245,234,211; --primary-200:238,220,180;
+  --primary-300:231,205,148; --primary-400:224,190,116; --primary-500:210,162,78;
+  --primary-600:186,138,58; --primary-700:155,112,44; --primary-800:120,86,34;
+  --primary-900:92,66,26; --primary-950:55,39,15;
+
+  /* وظيفية: success أخضر #34D399 · warning كهرماني #FBBF24 · danger أحمر #F87171 · info أزرق #60A5FA */
+  --success-50:236,253,245; --success-100:209,250,229; --success-200:167,243,208;
+  --success-300:110,231,183; --success-400:52,211,153; --success-500:16,185,129;
+  --success-600:5,150,105; --success-700:4,120,87; --success-800:6,95,70;
+  --success-900:6,78,59; --success-950:2,44,34;
+
+  --warning-50:255,251,235; --warning-100:254,243,199; --warning-200:253,230,138;
+  --warning-300:252,211,77; --warning-400:251,191,36; --warning-500:245,158,11;
+  --warning-600:217,119,6; --warning-700:180,83,9; --warning-800:146,64,14;
+  --warning-900:120,53,15; --warning-950:69,26,3;
+
+  --danger-50:254,242,242; --danger-100:254,226,226; --danger-200:254,202,202;
+  --danger-300:252,165,165; --danger-400:248,113,113; --danger-500:239,68,68;
+  --danger-600:220,38,38; --danger-700:185,28,28; --danger-800:153,27,27;
+  --danger-900:127,29,29; --danger-950:69,10,10;
+
+  --info-50:239,246,255; --info-100:219,234,254; --info-200:191,219,254;
+  --info-300:147,197,253; --info-400:96,165,250; --info-500:59,130,246;
+  --info-600:37,99,235; --info-700:29,78,216; --info-800:30,64,175;
+  --info-900:30,58,138; --info-950:23,37,84;
+}
+
+/* ─── 4) الجسم: الخلفية والخط واتجاه التوهج ─── */
+body.fi-panel-admin.fi-body{
+  background:#0F1319;
+  color:#F1ECE1;
+  font-family:'Tajawal',system-ui,sans-serif;
+  scrollbar-width:thin;
+  scrollbar-color:#1B222D #0F1319;
+}
+/* التوهج العلوي أُزيل نهائيًا بطلب المالك — لا يُعاد.
+   (كان radial-gradient نحاسي شفاف أعلى الصفحة) */
+/* تحديد الخصائص عبر المحدد الدقيق لدعم التمييز (selection) */
+body.fi-panel-admin.fi-body ::selection{background:rgba(210,162,78,.12);color:#EAC97F}
+/* حالة التركيز الموحدة: حلقة نحاسية 2px */
+body.fi-panel-admin :focus-visible{outline:2px solid #D2A24E;outline-offset:2px;border-radius:4px}
+
+/* ─── 5) سكرول بار رفيع — إبهام سطح ثانوي وتمرير نحاسي ─── */
+body.fi-panel-admin ::-webkit-scrollbar{width:5px;height:5px}
+body.fi-panel-admin ::-webkit-scrollbar-track{background:transparent}
+body.fi-panel-admin ::-webkit-scrollbar-thumb{background:#1B222D;border-radius:3px}
+body.fi-panel-admin ::-webkit-scrollbar-thumb:hover{background:#D2A24E}
+
+/* ─── 6) الهيكل العام: layout / main ─── */
+body.fi-panel-admin .fi-layout{background:transparent;position:relative;z-index:1}
+body.fi-panel-admin .fi-main-ctn{background:transparent}
+body.fi-panel-admin .fi-main{background:transparent}
+
+/* ─── 7) الشريط العلوي: sticky + blur + حد سفلي ─── */
+body.fi-panel-admin .fi-topbar{
+  position:sticky;
+  top:0;
+  z-index:50;
+  /* كان rgba(12,14,20,.85) — أسود بمسحة كحلية لا تشبه هوية المتجر.
+     الآن خلفية الثيم نفسها (#0F1319) بشفافية خفيفة ليعمل التمويه تحته. */
+  background:rgba(15,19,25,.9);
+  backdrop-filter:blur(16px);
+  -webkit-backdrop-filter:blur(16px);
+  border-bottom:1px solid rgba(255,255,255,.06);
+}
+/* الشريط الداخلي: سطح الثيمة لا الأبيض/الرمادي الافتراضي */
+body.fi-panel-admin .fi-topbar>nav{
+  background:#0F1319;
+  box-shadow:none;
+  --tw-ring-color:rgba(255,255,255,.06);
+}
+body.fi-panel-admin .fi-topbar-item{color:#A79F8F}
+body.fi-panel-admin .fi-topbar-item:hover{color:#EAC97F}
+
+/* ─── 8) الشريط الجانبي: سطح + بند نشط بحد جانبي نحاسي + badge ─── */
+body.fi-panel-admin .fi-sidebar{background:#171D26;border-inline-end:1px solid rgba(255,255,255,.06)}
+body.fi-panel-admin .fi-sidebar-header{background:#171D26;border-bottom:1px solid rgba(255,255,255,.06)}
+body.fi-panel-admin .fi-sidebar-nav-groups{background:transparent}
+body.fi-panel-admin .fi-sidebar-item{
+  position:relative;
+  color:#A79F8F;
+  font-weight:500;
+  border-radius:8px;
+  transition:color .15s,background-color .15s;
+}
+body.fi-panel-admin .fi-sidebar-item:hover{color:#F1ECE1;background:#181C28}
+body.fi-panel-admin .fi-sidebar-item-icon{color:inherit}
+body.fi-panel-admin .fi-sidebar-item-label{font-family:'Tajawal',system-ui,sans-serif;font-weight:500}
+/* البند النشط: نحاسي خافت + حد جانبي نحاسي 3px */
+body.fi-panel-admin .fi-sidebar-item.fi-sidebar-item-active,
+body.fi-panel-admin .fi-sidebar-item-active{
+  color:#EAC97F;
+  background:rgba(210,162,78,.12);
+  font-weight:600;
+}
+body.fi-panel-admin .fi-sidebar-item.fi-sidebar-item-active .fi-sidebar-item-label,
+body.fi-panel-admin .fi-sidebar-item-active .fi-sidebar-item-label{color:#EAC97F;font-weight:600}
+body.fi-panel-admin .fi-sidebar-item.fi-sidebar-item-active::before,
+body.fi-panel-admin .fi-sidebar-item-active::before{
+  content:'';
+  position:absolute;
+  inset-inline-start:0;
+  top:20%;
+  height:60%;
+  width:3px;
+  border-radius:3px;
+  background:#D2A24E;
+}
+/* badge الشريط الجانبي: كبسولة نحاسية */
+body.fi-panel-admin .fi-sidebar-item-badge{
+  background:#D2A24E;
+  color:#fff;
+  min-width:20px;
+  height:20px;
+  border-radius:10px;
+  font-size:10.5px;
+  font-weight:700;
+  padding-inline:5px;
+  display:grid;
+  place-items:center;
+}
+body.fi-panel-admin .fi-sidebar-item-grouped-border{border-color:rgba(255,255,255,.06)}
+
+/* ─── 9) ترويسة الصفحة: Rubik 700 ─── */
+body.fi-panel-admin .fi-header-heading{
+  font-family:'Tajawal',system-ui,sans-serif;
+  font-weight:700;
+  color:#F1ECE1;
+  letter-spacing:-.01em;
+}
+body.fi-panel-admin .fi-header-subheading{color:#8A93A3}
+
+/* ─── 10) الأقسام والكروت والويدجات: سطح + حد + زوايا 14px ─── */
+body.fi-panel-admin .fi-section,
+body.fi-panel-admin .fi-card{
+  background:#171D26;
+  border:1px solid rgba(255,255,255,.06);
+  border-radius:14px;
+  box-shadow:0 2px 8px rgba(0,0,0,.25);
+}
+body.fi-panel-admin .fi-section-header{border-bottom:1px solid rgba(255,255,255,.06)}
+body.fi-panel-admin .fi-wi-widget{
+  background:#171D26;
+  border:1px solid rgba(255,255,255,.06);
+  border-radius:14px;
+  box-shadow:0 2px 8px rgba(0,0,0,.25);
+}
+body.fi-panel-admin .fi-wi-content{color:#F1ECE1}
+
+/* ─── 11) كروت الإحصاء: سطح + رقم كبير (32px/800 بأسلوب عدّادات الحالات) ─── */
+body.fi-panel-admin .fi-wi-stats-overview-stat{
+  background:#171D26;
+  border:1px solid rgba(255,255,255,.06);
+  border-radius:14px;
+  box-shadow:0 2px 8px rgba(0,0,0,.25);
+  transition:transform .25s cubic-bezier(.2,.8,.2,1),box-shadow .25s,border-color .25s;
+}
+body.fi-panel-admin .fi-wi-stats-overview-stat:hover{
+  border-color:rgba(210,162,78,.3);
+  box-shadow:0 12px 40px rgba(210,162,78,.15),0 8px 30px rgba(0,0,0,.35);
+}
+body.fi-panel-admin .fi-wi-stats-overview-stat-label{color:#A79F8F;font-weight:500}
+body.fi-panel-admin .fi-wi-stats-overview-stat-value{
+  color:#F1ECE1;
+  font-size:32px;
+  font-weight:800;
+  line-height:1;
+  letter-spacing:-.02em;
+}
+body.fi-panel-admin .fi-wi-stats-overview-stat-description{color:#8A93A3}
+body.fi-panel-admin .fi-wi-stats-overview-stat-icon{border-radius:12px}
+
+/* ─── 12) الجدول الكامل (fi-ta-table) ─── */
+body.fi-panel-admin .fi-ta-content{background:transparent}
+body.fi-panel-admin .fi-ta-header-ctn,
+body.fi-panel-admin .fi-ta-header-toolbar{background:transparent}
+body.fi-panel-admin .fi-ta-table{background:#171D26;font-size:13px}
+body.fi-panel-admin .fi-ta-table th{
+  padding:10px 16px;
+  border-bottom:1px solid rgba(255,255,255,.06);
+  background:transparent;
+}
+body.fi-panel-admin .fi-ta-header-cell{border-bottom:1px solid rgba(255,255,255,.06)}
+body.fi-panel-admin .fi-ta-header-cell-label{
+  font-family:'Tajawal',system-ui,sans-serif;
+  font-size:10.5px;
+  font-weight:600;
+  color:#8A93A3;
+  text-transform:uppercase;
+  letter-spacing:.05em;
+}
+body.fi-panel-admin .fi-ta-table td{
+  padding:11px 16px;
+  border-bottom:1px solid rgba(255,255,255,.06);
+  color:#F1ECE1;
+}
+body.fi-panel-admin .fi-ta-table tr:last-child td{border-bottom:0}
+body.fi-panel-admin .fi-ta-table tbody tr,
+body.fi-panel-admin .fi-ta-row{transition:background-color .15s}
+body.fi-panel-admin .fi-ta-table tbody tr:hover,
+body.fi-panel-admin .fi-ta-row:hover{background:#181C28}
+body.fi-panel-admin .fi-ta-empty-state{color:#8A93A3}
+
+/* ─── 13) الحقول: خلفية سطح + حد + تركيز نحاسي ─── */
+body.fi-panel-admin .fi-input,
+body.fi-panel-admin .fi-select-input>button,
+body.fi-panel-admin textarea.fi-input{
+  background:#171D26!important;
+  border-color:rgba(255,255,255,.12)!important;
+  color:#F1ECE1!important;
+  border-radius:8px!important;
+}
+body.fi-panel-admin .fi-input::placeholder{color:#8A93A3}
+body.fi-panel-admin .fi-input:focus,
+body.fi-panel-admin .fi-input:focus-within,
+body.fi-panel-admin .fi-select-input>button:focus{
+  border-color:#D2A24E!important;
+  box-shadow:0 0 0 3px rgba(210,162,78,.12)!important;
+  outline:none!important;
+}
+/* خانات الاختيار والراديو: لمسة نحاسية */
+body.fi-panel-admin input[type='checkbox'],
+body.fi-panel-admin input[type='radio']{accent-color:#D2A24E}
+body.fi-panel-admin .fi-checkbox-input,
+body.fi-panel-admin .fi-radio-input{accent-color:#D2A24E}
+/* المفتاح (toggle): لون primary نحاسي عبر متغيرات اللوحة تلقائيا */
+body.fi-panel-admin .fi-fo-toggle{accent-color:#D2A24E}
+/* قائمة select الأصلية داخل الوضع الداكن */
+body.fi-panel-admin select.fi-input option,
+body.fi-panel-admin select.fi-input optgroup{background:#181C28;color:#F1ECE1}
+
+/* ─── 14) الأزرار: primary نحاسي متدرج · gray فحمي بحد · danger أحمر ─── */
+body.fi-panel-admin .fi-btn{
+  border-radius:8px;
+  font-family:'Tajawal',system-ui,sans-serif;
+  font-weight:600;
+  transition:background-color .2s,color .2s,border-color .2s,box-shadow .2s,filter .2s;
+}
+body.fi-panel-admin .fi-btn svg{color:inherit}
+body.fi-panel-admin .fi-btn-color-primary{
+  background:linear-gradient(135deg,#D2A24E,#8E6222)!important;
+  color:#fff!important;
+  border:1px solid rgba(210,162,78,.3)!important;
+  box-shadow:0 2px 8px rgba(210,162,78,.25);
+}
+body.fi-panel-admin .fi-btn-color-primary:hover{
+  background:#EAC97F!important;
+  border-color:#EAC97F!important;
+  box-shadow:0 4px 16px rgba(210,162,78,.35);
+}
+body.fi-panel-admin .fi-btn-color-primary svg{color:#fff}
+body.fi-panel-admin .fi-btn-color-gray{
+  background:#181C28!important;
+  color:#F1ECE1!important;
+  border:1px solid rgba(255,255,255,.12)!important;
+}
+body.fi-panel-admin .fi-btn-color-gray:hover{
+  border-color:#D2A24E!important;
+  color:#EAC97F!important;
+  background:#1B222D!important;
+}
+body.fi-panel-admin .fi-btn-color-danger{
+  background:#F87171!important;
+  color:#0F1319!important;
+  border:1px solid rgba(248,113,113,.3)!important;
+}
+body.fi-panel-admin .fi-btn-color-danger:hover{background:#FCA5A5!important;border-color:#FCA5A5!important}
+/* أزرار success/warning/info ترث لوحات الألوان المعرّفة أعلاه تلقائيا */
+/* الأزرار الأيقونية */
+body.fi-panel-admin .fi-icon-btn{color:#A79F8F;transition:color .2s,background-color .2s}
+body.fi-panel-admin .fi-icon-btn:hover{color:#EAC97F;background:rgba(210,162,78,.12)}
+body.fi-panel-admin .fi-ta-record-actions .fi-icon-btn{color:#A79F8F}
+body.fi-panel-admin .fi-ta-record-actions .fi-icon-btn:hover{color:#EAC97F}
+
+/* ─── 15) الشارات: كبسولة 20px بألوان التصميم الوظيفية ─── */
+body.fi-panel-admin .fi-badge{
+  border-radius:20px;
+  font-family:'Tajawal',system-ui,sans-serif;
+  font-size:10.5px;
+  font-weight:600;
+  padding:3px 9px;
+  border:1px solid transparent;
+}
+body.fi-panel-admin .fi-badge-color-primary{color:#EAC97F;background:rgba(210,162,78,.12);border-color:rgba(210,162,78,.3)}
+body.fi-panel-admin .fi-badge-color-success{color:#34D399;background:rgba(52,211,153,.1);border-color:rgba(52,211,153,.25)}
+body.fi-panel-admin .fi-badge-color-warning{color:#FBBF24;background:rgba(251,191,36,.1);border-color:rgba(251,191,36,.25)}
+body.fi-panel-admin .fi-badge-color-danger{color:#F87171;background:rgba(248,113,113,.1);border-color:rgba(248,113,113,.25)}
+body.fi-panel-admin .fi-badge-color-info{color:#60A5FA;background:rgba(96,165,250,.1);border-color:rgba(96,165,250,.25)}
+body.fi-panel-admin .fi-badge-color-gray{color:#A79F8F;background:rgba(255,255,255,.04);border-color:rgba(255,255,255,.12)}
+
+/* ─── 16) النوافذ المنبثقة: صندوق فحمي بحد وظل عميق ─── */
+body.fi-panel-admin .fi-modal-close-overlay{
+  background:rgba(6,8,12,.75);
+  backdrop-filter:blur(4px);
+  -webkit-backdrop-filter:blur(4px);
+}
+body.fi-panel-admin .fi-modal-window,
+body.fi-panel-admin .fi-modal-slide-over-window{
+  background:#171D26;
+  border:1px solid rgba(255,255,255,.12);
+  border-radius:20px;
+  box-shadow:0 8px 30px rgba(0,0,0,.35);
+  color:#F1ECE1;
+}
+body.fi-panel-admin .fi-modal-header{border-bottom:1px solid rgba(255,255,255,.06)}
+body.fi-panel-admin .fi-modal-content{color:#F1ECE1}
+body.fi-panel-admin .fi-modal-footer{border-top:1px solid rgba(255,255,255,.06)}
+body.fi-panel-admin .fi-modal-close-btn{color:#8A93A3}
+body.fi-panel-admin .fi-modal-close-btn:hover{color:#EAC97F;background:rgba(210,162,78,.12)}
+
+/* ─── 17) الإشعارات: فحمية بحد نحاسي ─── */
+body.fi-panel-admin .fi-no-notification{
+  background:#171D26;
+  border:1px solid rgba(210,162,78,.3);
+  border-radius:14px;
+  box-shadow:0 8px 30px rgba(0,0,0,.35);
+  color:#F1ECE1;
+}
+body.fi-panel-admin .fi-no-notification-title{color:#F1ECE1;font-weight:700}
+body.fi-panel-admin .fi-no-notification-body{color:#A79F8F}
+body.fi-panel-admin .fi-no-notification-close-btn{color:#8A93A3}
+body.fi-panel-admin .fi-no-notification-close-btn:hover{color:#EAC97F}
+
+/* ─── 18) ترقيم الصفحات ─── */
+body.fi-panel-admin .fi-ta-pagination{color:#A79F8F}
+body.fi-panel-admin .fi-ta-pagination .fi-btn,
+body.fi-panel-admin .fi-ta-pagination .fi-icon-btn{
+  background:#171D26!important;
+  border:1px solid rgba(255,255,255,.12)!important;
+  color:#A79F8F!important;
+  border-radius:8px!important;
+}
+body.fi-panel-admin .fi-ta-pagination .fi-btn:not([disabled]):hover,
+body.fi-panel-admin .fi-ta-pagination .fi-icon-btn:not([disabled]):hover{
+  border-color:#D2A24E!important;
+  color:#EAC97F!important;
+  background:rgba(210,162,78,.12)!important;
+}
+body.fi-panel-admin .fi-ta-pagination [disabled]{opacity:.4}
+
+/* ─── 19) التبويبات (fi-fo-tabs-tab) ─── */
+body.fi-panel-admin .fi-fo-tabs-tab{
+  color:#A79F8F;
+  font-family:'Tajawal',system-ui,sans-serif;
+  font-weight:600;
+  border-bottom:2px solid transparent;
+  transition:color .2s,border-color .2s,background-color .2s;
+}
+body.fi-panel-admin .fi-fo-tabs-tab:hover{color:#F1ECE1}
+body.fi-panel-admin .fi-fo-tabs-tab.fi-active{
+  color:#EAC97F;
+  border-color:#D2A24E;
+  background:rgba(210,162,78,.12);
+}
+
+/* ─── 20) منتقي الألوان / رفع الملفات / المحرر الغني / المكرر ─── */
+body.fi-panel-admin .fi-fo-color-picker-panel{
+  background:#181C28;
+  border:1px solid rgba(255,255,255,.12);
+  border-radius:14px;
+  box-shadow:0 8px 30px rgba(0,0,0,.35);
+}
+body.fi-panel-admin .fi-fo-color-picker-preview{border:1px solid rgba(255,255,255,.12)}
+body.fi-panel-admin .fi-fo-file-upload{color:#A79F8F}
+body.fi-panel-admin .fi-fo-file-upload .filepond--root .filepond--drop-label{color:#A79F8F}
+body.fi-panel-admin .fi-fo-file-upload .filepond--panel-root{background:#181C28;border:1px dashed rgba(255,255,255,.12);border-radius:14px}
+body.fi-panel-admin .fi-fo-rich-editor{background:#171D26}
+body.fi-panel-admin .fi-fo-rich-editor .fi-fo-rich-editor-toolbar{background:#181C28;border-bottom:1px solid rgba(255,255,255,.06)}
+body.fi-panel-admin .fi-fo-rich-editor-toolbar-btn{
+  color:#A79F8F;
+  border-radius:8px;
+  transition:color .15s,background-color .15s;
+}
+body.fi-panel-admin .fi-fo-rich-editor-toolbar-btn:hover{background:rgba(210,162,78,.12);color:#EAC97F}
+body.fi-panel-admin .fi-fo-rich-editor-toolbar-btn.fi-active{background:rgba(210,162,78,.12);color:#EAC97F}
+body.fi-panel-admin .fi-fo-rich-editor .trix-content,
+body.fi-panel-admin .fi-fo-rich-editor .ProseMirror{color:#F1ECE1}
+body.fi-panel-admin .fi-fo-repeater-item{
+  background:#181C28;
+  border:1px solid rgba(255,255,255,.06);
+  border-radius:14px;
+}
+body.fi-panel-admin .fi-fo-repeater-item-header{color:#A79F8F}
+body.fi-panel-admin .fi-fo-repeater-item-content{border-color:rgba(255,255,255,.06)}
+
+/* ─── 21) القوائم المنسدلة: dropdown + autocomplete (fi-ac) + Choices.js ─── */
+body.fi-panel-admin .fi-dropdown-panel{
+  background:#181C28;
+  border:1px solid rgba(255,255,255,.12);
+  border-radius:14px;
+  box-shadow:0 8px 30px rgba(0,0,0,.35);
+}
+body.fi-panel-admin .fi-dropdown-list{background:transparent}
+body.fi-panel-admin .fi-dropdown-list-item{color:#F1ECE1;border-radius:8px}
+body.fi-panel-admin .fi-dropdown-list-item:hover{background:rgba(210,162,78,.12);color:#EAC97F}
+body.fi-panel-admin .fi-dropdown-header-label{color:#A79F8F}
+body.fi-panel-admin .fi-ac-action{color:#EAC97F}
+/* قوائم Choices.js للحقول القابلة للبحث */
+body.fi-panel-admin .choices__list--dropdown,
+body.fi-panel-admin .choices__list[aria-expanded]{
+  background:#181C28;
+  border:1px solid rgba(255,255,255,.12);
+  border-radius:14px;
+  box-shadow:0 8px 30px rgba(0,0,0,.35);
+}
+body.fi-panel-admin .choices__list--dropdown .choices__item--selectable{color:#F1ECE1}
+body.fi-panel-admin .choices__list--dropdown .choices__item--selectable.is-highlighted,
+body.fi-panel-admin .choices__list--dropdown .choices__placeholder{background:rgba(210,162,78,.12);color:#EAC97F}
+body.fi-panel-admin .choices__input{background:#171D26;color:#F1ECE1}
+body.fi-panel-admin .choices__input::placeholder{color:#8A93A3}
+
+/* ─── 22) صفحة الدخول: فحمية كاملة بزوايا 20px ─── */
+body.fi-panel-admin .fi-simple-layout{background:#0F1319;min-height:100vh}
+body.fi-panel-admin .fi-simple-main,
+body.fi-panel-admin .fi-simple-main-ctn{background:transparent}
+body.fi-panel-admin .fi-simple-layout .fi-section{
+  border-radius:20px;
+  box-shadow:0 8px 30px rgba(0,0,0,.35);
+}
+
+/* ─── 23) قسم «ما يراه العميل» في نموذج المنتج ───
+   طلب المالك: «زر بلون واضح» يميّز مفاتيح الإظهار والإخفاء عن بقية الحقول.
+   فيُعطى القسم حدًّا نحاسيًا وخلفية مميّزة وعنوانًا بلون الشمبانيا،
+   فيقع عليه البصر فورًا بين أقسام النموذج. */
+body.fi-panel-admin .nad-visibility{
+  border-color:rgba(210,162,78,.45)!important;
+  background:linear-gradient(180deg,rgba(210,162,78,.08),rgba(210,162,78,0) 55%)!important;
+  box-shadow:0 0 0 1px rgba(210,162,78,.12),0 2px 8px rgba(0,0,0,.25)!important;
+}
+body.fi-panel-admin .nad-visibility .fi-section-header-heading{color:#EAC97F}
+body.fi-panel-admin .nad-visibility .fi-section-header-icon{color:#D2A24E}
+body.fi-panel-admin .nad-visibility .fi-section-header-description{color:#A79F8F}
+body.fi-panel-admin .nad-visibility .fi-fo-toggle{font-weight:600}

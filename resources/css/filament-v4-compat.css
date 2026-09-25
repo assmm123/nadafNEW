@@ -1,0 +1,86 @@
+/* ══════════════════════════════════════════════════════════════════════════
+   إصلاح توافق: Filament 3 + Tailwind v4 — شبكة الأعمدة
+   ──────────────────────────────────────────────────────────────────────────
+   Filament يبني شبكته كلها على اختصار Tailwind v3 للإشارة إلى متغيّر CSS:
+
+       grid-cols-[--cols-default]      (v3)  ⇒  grid-template-columns: var(--cols-default)
+       grid-cols-[--cols-default]      (v4)  ⇒  grid-template-columns: --cols-default
+
+   أي أن Tailwind v4 يُخرج القيمة حرفيًا بلا `var()`، وهي **قيمة غير صالحة
+   يتجاهلها المتصفح تمامًا**. النتيجة: لا شبكة أعمدة في اللوحة إطلاقًا —
+   لا امتداد خلايا ولا أعمدة جانبية، فتتقلّص كل بطاقة إلى عرض محتواها.
+
+   ظهر الأثر في صفحة الطلب: بطاقات ضيّقة في عمود واحد وفراغ يملأ الصفحة.
+
+   لماذا المحدِّد مسبوق بـ`body.fi-panel-admin`؟
+   لأن Tailwind يولّد القاعدة المعطوبة بالمحدِّد نفسه، فيدمجهما المُصغِّر
+   ويُسقط إحداهما (أسقط قاعدتي فعلًا). توسيع المحدِّد يمنع التصادم، ويرفع
+   الأفضلية في الوقت نفسه.
+
+   وهذه القواعد **غير مُدرجة داخل @layer** عمدًا: غير المُدرج يتقدّم على
+   الطبقات، فيغلب مخرجات Tailwind المعطوبة. لا تنقلها إلى @layer.
+
+   المصدر: بحث شامل في قوالب Filament داخل vendor عن نمط [--var].
+   (تنبيه: لا تكتب نجمة-شرطة-مائلة داخل تعليق CSS — تُنهيه. ولا داخل تعليق Blade.)
+   ══════════════════════════════════════════════════════════════════════════ */
+
+body.fi-panel-admin .grid-cols-\[--cols-default\] { grid-template-columns: var(--cols-default); }
+body.fi-panel-admin .columns-\[--cols-default\] { columns: var(--cols-default); }
+body.fi-panel-admin .col-\[--col-span-default\] { grid-column: var(--col-span-default); }
+body.fi-panel-admin .col-start-\[--col-start-default\] { grid-column-start: var(--col-start-default); }
+body.fi-panel-admin .line-clamp-\[--line-clamp\] { -webkit-line-clamp: var(--line-clamp); line-clamp: var(--line-clamp); }
+body.fi-panel-admin .w-\[--sidebar-width\] { width: var(--sidebar-width); }
+
+/* ══════════════════════════════════════════════════════════════════════════
+   أصناف اللون الديناميكية `custom-*`
+   ──────────────────────────────────────────────────────────────────────────
+   Filament يولّد هذه الأصناف في CSS ثيمه الخاص — وهو غير مُستورد هنا
+   (Tailwind v4 + Filament v3). فالمفتاح المفعّل يعتمد على `bg-custom-600`
+   التي **لا وجود لها**، فيظهر المفتاح فارغًا وكأنه مُطفأ رغم أنه مفعّل.
+
+   Filament يضع المتغيّر inline على العنصر: `--c-600: var(--primary-600)`،
+   وقيمة `--primary-600` بصيغة RGB مفصولة بمسافات ⇒ `rgb(var(--c-600))`.
+   ══════════════════════════════════════════════════════════════════════════ */
+
+body.fi-panel-admin .bg-custom-100 { background-color: rgb(var(--c-100)); }
+body.fi-panel-admin .bg-custom-400 { background-color: rgb(var(--c-400)); }
+body.fi-panel-admin .bg-custom-500 { background-color: rgb(var(--c-500)); }
+body.fi-panel-admin .bg-custom-600 { background-color: rgb(var(--c-600)); }
+
+body.fi-panel-admin .text-custom-300 { color: rgb(var(--c-300)); }
+body.fi-panel-admin .text-custom-400 { color: rgb(var(--c-400)); }
+body.fi-panel-admin .text-custom-500 { color: rgb(var(--c-500)); }
+body.fi-panel-admin .text-custom-600 { color: rgb(var(--c-600)); }
+body.fi-panel-admin .text-custom-700 { color: rgb(var(--c-700)); }
+
+body.fi-panel-admin .ring-custom-400 { --tw-ring-color: rgb(var(--c-400)); }
+body.fi-panel-admin .ring-custom-500 { --tw-ring-color: rgb(var(--c-500)); }
+body.fi-panel-admin .ring-custom-600 { --tw-ring-color: rgb(var(--c-600)); }
+
+@media (min-width: 40rem) {
+    body.fi-panel-admin .sm\:grid-cols-\[--cols-sm\] { grid-template-columns: var(--cols-sm); }
+    body.fi-panel-admin .sm\:columns-\[--cols-sm\] { columns: var(--cols-sm); }
+    body.fi-panel-admin .sm\:col-\[--col-span-sm\] { grid-column: var(--col-span-sm); }
+    body.fi-panel-admin .sm\:col-start-\[--col-start-sm\] { grid-column-start: var(--col-start-sm); }
+}
+
+@media (min-width: 48rem) {
+    body.fi-panel-admin .md\:grid-cols-\[--cols-md\] { grid-template-columns: var(--cols-md); }
+    body.fi-panel-admin .md\:columns-\[--cols-md\] { columns: var(--cols-md); }
+    body.fi-panel-admin .md\:col-\[--col-span-md\] { grid-column: var(--col-span-md); }
+    body.fi-panel-admin .md\:col-start-\[--col-start-md\] { grid-column-start: var(--col-start-md); }
+}
+
+@media (min-width: 64rem) {
+    body.fi-panel-admin .lg\:grid-cols-\[--cols-lg\] { grid-template-columns: var(--cols-lg); }
+    body.fi-panel-admin .lg\:columns-\[--cols-lg\] { columns: var(--cols-lg); }
+    body.fi-panel-admin .lg\:col-\[--col-span-lg\] { grid-column: var(--col-span-lg); }
+    body.fi-panel-admin .lg\:col-start-\[--col-start-lg\] { grid-column-start: var(--col-start-lg); }
+}
+
+@media (min-width: 80rem) {
+    body.fi-panel-admin .xl\:grid-cols-\[--cols-xl\] { grid-template-columns: var(--cols-xl); }
+    body.fi-panel-admin .xl\:columns-\[--cols-xl\] { columns: var(--cols-xl); }
+    body.fi-panel-admin .xl\:col-\[--col-span-xl\] { grid-column: var(--col-span-xl); }
+    body.fi-panel-admin .xl\:col-start-\[--col-start-xl\] { grid-column-start: var(--col-start-xl); }
+}
